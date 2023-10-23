@@ -1,0 +1,11 @@
+{
+  "name": "@what-the-buzz/react-native-sdk",
+  "version": "0.0.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "peerDependencies": {
+    "react": ">=17.0.2",
+    "react-native": ">0.64"
+  }
+}
