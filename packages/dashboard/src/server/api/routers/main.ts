@@ -7,7 +7,7 @@ export const mainRouter = createTRPCRouter({
   createProject: protectedProcedure
     .input(z.object({ name: z.string() }))
     .query(async ({ input: { name }, ctx: { user, prisma } }) => {
-      await prisma.project.create({
+      await prisma.projects.create({
         data: {
           name,
           userId: user.id,
@@ -23,7 +23,7 @@ export const mainRouter = createTRPCRouter({
     )
     .query(async ({ input: { projectToken }, ctx: { prisma, user } }) => {
       const project = await niceTry.promise(async () =>
-        prisma.project.findFirst({
+        prisma.projects.findFirst({
           where: { token: projectToken, userId: user.id },
         }),
       );

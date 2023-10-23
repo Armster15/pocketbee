@@ -9,7 +9,7 @@ datasource db {
     schemas  = ["auth", "public"]
 }
 
-model Project {
+model Projects {
     user        users  @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId      String @db.Uuid
     name        String
@@ -286,7 +286,7 @@ model users {
     identities                  identities[]
     mfa_factors                 mfa_factors[]
     sessions                    sessions[]
-    Project                     Project[]
+    Projects                    Projects[]
 
     @@index([instance_id])
     @@schema("auth")
