@@ -4,9 +4,15 @@ import { TRPCError } from "@trpc/server";
 import niceTry from "nice-try";
 
 export const mainRouter = createTRPCRouter({
+  getProjects: protectedProcedure.query(async ({ ctx: { user, prisma } }) => {
+    const projects = await prisma.projects.findMany({
+      where: { userId: user.id },
+    });
+    return projects;
+  }),
   createProject: protectedProcedure
     .input(z.object({ name: z.string() }))
-    .query(async ({ input: { name }, ctx: { user, prisma } }) => {
+    .mutation(async ({ input: { name }, ctx: { user, prisma } }) => {
       await prisma.projects.create({
         data: {
           name,
