@@ -1,43 +1,41 @@
 import { Fragment, useState } from "react";
+import Link from "next/link";
 import { api } from "$/utils/api";
 import { Dialog, Transition } from "@headlessui/react";
+import { Layout } from "$/components/Layout";
+import { Button } from "$/components/Button";
 
 export default function Home() {
-  const { data: projects, error, isLoading } = api.main.getProjects.useQuery();
+  const { data: projects, error, isLoading } = api.projects.getAll.useQuery();
 
   return (
-    <div className="min-h-screen bg-gray-200 p-8">
-      <nav>
-        <h1 className="text-3xl font-semibold">What the Buzz</h1>
+    <Layout>
+      <CreateProjectButtonWithModal />
 
-        <main className="mt-6">
-          <CreateProjectButtonWithModal />
+      <div className="mt-12 grid grid-cols-5 gap-12">
+        {projects &&
+          projects.length > 0 &&
+          projects.map((project) => (
+            <Link
+              href={`/project/${project.id}`}
+              key={project.id}
+              className="h-36 rounded-2xl bg-white p-5 hover:shadow-md active:bg-gray-100/95"
+            >
+              {project.name}
+            </Link>
+          ))}
 
-          <div className="mt-12 grid grid-cols-5 gap-12">
-            {projects &&
-              projects.length > 0 &&
-              projects.map((project) => (
-                <a
-                  key={project.id}
-                  className="h-36 rounded-2xl bg-white p-5 hover:shadow-md active:bg-gray-100/95"
-                >
-                  {project.name}
-                </a>
-              ))}
-
-            {projects && projects.length === 0 && <p>No projects (yet...)</p>}
-          </div>
-        </main>
-      </nav>
-    </div>
+        {projects && projects.length === 0 && <p>No projects (yet...)</p>}
+      </div>
+    </Layout>
   );
 }
 
 export function CreateProjectButtonWithModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
-  const createProjectMutation = api.main.createProject.useMutation();
-  const { refetch: refetchProjects } = api.main.getProjects.useQuery();
+  const createProjectMutation = api.projects.create.useMutation();
+  const { refetch: refetchProjects } = api.projects.getAll.useQuery();
 
   async function onSubmit() {
     await createProjectMutation.mutateAsync({ name });
@@ -53,12 +51,7 @@ export function CreateProjectButtonWithModal() {
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="rounded-2xl bg-white p-3 hover:shadow-md active:bg-gray-100/95"
-      >
-        Create new project
-      </button>
+      <Button onClick={() => setIsOpen(true)}>Create new project</Button>
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>

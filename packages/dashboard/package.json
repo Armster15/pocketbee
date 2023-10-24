@@ -24,6 +24,7 @@
     "@trpc/next": "^10.37.1",
     "@trpc/react-query": "^10.37.1",
     "@trpc/server": "^10.37.1",
+    "clsx": "^2.0.0",
     "next": "^13.5.4",
     "nice-try": "^3.0.1",
     "react": "18.2.0",
@@ -46,6 +47,7 @@
     "prettier": "^3.0.0",
     "prettier-plugin-tailwindcss": "^0.5.1",
     "prisma": "^5.1.1",
+    "react-html-props": "^2.0.3",
     "tailwindcss": "^3.3.3",
     "typescript": "^5.1.6"
   }
