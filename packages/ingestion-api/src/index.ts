@@ -114,7 +114,6 @@ const app = new Elysia()
     },
     // On `identify` event, authenticate user and create event listener
     async message(ws, message) {
-      console.log(message);
       const { data: jwt } = message;
       const {
         data: { user: user },
