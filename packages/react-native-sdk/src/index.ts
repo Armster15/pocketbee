@@ -1,6 +1,11 @@
 import { AppState, type AppStateStatus } from "react-native";
+import { edenTreaty } from "@elysiajs/eden";
+import type { App as IngestionApi } from "@what-the-buzz/ingestion-api";
 
 let projectToken: string;
+let userId: string;
+
+const ingestionApi = edenTreaty<IngestionApi>("http://localhost:5050");
 
 async function onAppStateChange(status: AppStateStatus) {
   console.log(status);
@@ -13,27 +18,28 @@ async function onAppStateChange(status: AppStateStatus) {
 }
 
 async function sendStart() {
-  // TODO implement /start api end point
-  // await app.start.post({
-  //   projectToken,
-  //   userId: "1",
-  // });
+  await ingestionApi.start.post({
+    projectToken,
+    userId,
+  });
 }
 
 async function sendEnd() {
-  // TODO implement /end api end point
-  // app.end.post({
-  //   projectToken,
-  //   userId: "1",
-  // });
+  ingestionApi.end.post({
+    projectToken,
+    userId,
+  });
 }
 
 export const whatTheBuzz = {
-  init: (token: string) => {
-    projectToken = token;
+  init: (_projectToken: string) => {
+    projectToken = _projectToken;
     AppState.addEventListener("change", onAppStateChange);
 
     console.log("Hello from What the Buzz");
     sendStart();
+  },
+  identify: (_userId: string) => {
+    userId = _userId;
   },
 };
