@@ -10,12 +10,12 @@ datasource db {
 }
 
 model Projects {
-    user        users  @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId      String @db.Uuid
+    user        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId      String   @db.Uuid
     name        String
-    id          String @id @default(uuid()) @db.Uuid
-    token       String @default(uuid()) @db.Uuid
-    activeUsers Int    @default(0)
+    id          String   @id @unique @default(uuid()) @db.Uuid
+    token       String   @unique @default(uuid()) @db.Uuid
+    activeUsers String[] @default([])
 
     @@schema("public")
 }

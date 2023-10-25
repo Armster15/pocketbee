@@ -1,0 +1,17 @@
+{
+  "name": "@what-the-buzz/ingestion-api",
+  "version": "0.0.0",
+  "main": "./src/index.ts",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "^0.7.1",
+    "@what-the-buzz/db": "workspace:*",
+    "elysia": "^0.7.18"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "typed-emitter": "^2.1.0"
+  }
+}

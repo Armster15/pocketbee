@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@what-the-buzz/db";
 import { env } from "$/env.mjs";
 
 const globalForPrisma = globalThis as unknown as {
