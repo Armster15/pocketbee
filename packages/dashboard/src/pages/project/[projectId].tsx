@@ -6,6 +6,7 @@ import { api } from "$/utils/api";
 import { Button } from "$/components/Button";
 import { env } from "$/env.mjs";
 import type { App as IngestionApi } from "@what-the-buzz/ingestion-api";
+import { useSession } from "@supabase/auth-helpers-react";
 
 const ingestionApi = edenTreaty<IngestionApi>(
   env.NEXT_PUBLIC_INGESTION_API_URL,
@@ -22,6 +23,8 @@ export default function ProjectPage() {
   const deleteProjectMutation = api.projects.delete.useMutation();
   const { refetch: refetchProjects } = api.projects.getAll.useQuery();
 
+  const session = useSession();
+
   async function deleteProject() {
     if (!projectId) return;
 
@@ -31,16 +34,24 @@ export default function ProjectPage() {
   }
 
   useEffect(() => {
-    if (!projectId) return;
+    if (!projectId || !session) return;
 
     const ws = ingestionApi.ws.subscribe({
       $query: { projectId },
     });
 
-    ws.on("message", () => {
+    ws.on("open", () => {
+      ws.send({
+        event: "identify",
+        data: session.access_token,
+      });
+    });
+
+    ws.on("message", ({ data: message }) => {
+      console.info("WS >> ", message);
       refetchProject();
     });
-  }, [projectId]);
+  }, [projectId, session]);
 
   return (
     <Layout>

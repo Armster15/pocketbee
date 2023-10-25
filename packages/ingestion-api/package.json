@@ -7,8 +7,11 @@
   },
   "dependencies": {
     "@elysiajs/cors": "^0.7.1",
+    "@supabase/supabase-js": "^2.38.3",
+    "@t3-oss/env-core": "^0.7.1",
     "@what-the-buzz/db": "workspace:*",
-    "elysia": "^0.7.18"
+    "elysia": "^0.7.18",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "bun-types": "latest",
