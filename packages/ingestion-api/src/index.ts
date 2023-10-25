@@ -2,7 +2,10 @@ import { Elysia, t } from "elysia";
 import { cors } from "@elysiajs/cors";
 import { EventEmitter } from "node:events";
 import { PrismaClient } from "@what-the-buzz/db";
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import {
+  createClient as createSupabaseClient,
+  type User,
+} from "@supabase/supabase-js";
 import { env } from "./env";
 import type TypedEmitter from "typed-emitter";
 
@@ -13,6 +16,9 @@ const eventEmitter = new EventEmitter() as TypedEmitter<{
 }>;
 const prisma = new PrismaClient();
 const supabase = createSupabaseClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY);
+
+// Type for `ws.data.state`, which allows us to store "state" in a websocket connection
+type WSState = { listener?: (projectId: string) => void; authedUser?: User };
 
 const app = new Elysia()
   .use(cors())
@@ -92,26 +98,13 @@ const app = new Elysia()
   )
   .ws("/ws", {
     open(ws) {
-      function listener(projectId: string) {
-        if (
-          projectId === ws.data.query.projectId &&
-          // @ts-expect-error - TODO: Extend ElysiaWS somehow to create a `state` attr
-          ws.raw.data.authedUser
-        ) {
-          ws.send({ event: "update" });
-        }
-      }
-
-      // prettier-ignore
-      // @ts-expect-error - TODO: Extend ElysiaWS somehow to create a `state` attr
-      ws.raw.data ? (ws.raw.data.listener = listener) : (ws.raw.data = { listener });
-
-      eventEmitter.on("update", listener);
-      ws.send({ event: "hello", data: {} });
+      // @ts-expect-error TODO: Extend ElysiaWS somehow to create a `state` attr
+      ws.data.state = {};
+      ws.send({ event: "hello" });
     },
     close(ws) {
-      // @ts-expect-error - TODO: Extend ElysiaWS somehow to create a `state` attr
-      const listener = ws.raw.data?.listener;
+      // @ts-expect-error TODO: Extend ElysiaWS somehow to create a `state` attr
+      const listener = (ws.data.state as WSState).listener;
 
       if (listener) {
         eventEmitter.removeListener("update", listener);
@@ -119,7 +112,9 @@ const app = new Elysia()
         console.warn("WebSocket closed but no listener was found");
       }
     },
+    // On `identify` event, authenticate user and create event listener
     async message(ws, message) {
+      console.log(message);
       const { data: jwt } = message;
       const {
         data: { user: user },
@@ -150,11 +145,25 @@ const app = new Elysia()
         return;
       }
 
-      // prettier-ignore
-      // @ts-expect-error - TODO: Extend ElysiaWS somehow to create a `state` attr
-      ws.raw.data ? ws.raw.data.authedUser = user : ws.raw.data = {authedUser: user};
+      function listener(projectId: string) {
+        if (
+          projectId === ws.data.query.projectId &&
+          // @ts-expect-error TODO: Extend ElysiaWS somehow to create a `state` attr
+          (ws.data.state as WSState).authedUser
+        ) {
+          ws.send({ event: "update" });
+        }
+      }
 
-      ws.send({ event: "identified", data: {} });
+      // @ts-expect-error TODO: Extend ElysiaWS somehow to create a `state` attr
+      (ws.data.state as WSState) = {
+        listener,
+        authedUser: user,
+      };
+
+      eventEmitter.on("update", listener);
+
+      ws.send({ event: "identified" });
     },
     body: t.Object({
       event: t.Literal("identify"),
@@ -163,6 +172,27 @@ const app = new Elysia()
     query: t.Object({
       projectId: t.String(),
     }),
+    response: t.Union([
+      t.Object({
+        event: t.Literal("hello"),
+        data: t.Optional(t.Undefined()),
+      }),
+
+      t.Object({
+        event: t.Literal("identified"),
+        data: t.Optional(t.Undefined()),
+      }),
+
+      t.Object({
+        event: t.Literal("update"),
+        data: t.Optional(t.Undefined()),
+      }),
+
+      t.Object({
+        event: t.Literal("error"),
+        data: t.String(),
+      }),
+    ]),
   })
   .listen(PORT);
 

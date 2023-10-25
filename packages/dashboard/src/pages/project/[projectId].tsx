@@ -40,16 +40,19 @@ export default function ProjectPage() {
       $query: { projectId },
     });
 
-    ws.on("open", () => {
-      ws.send({
-        event: "identify",
-        data: session.access_token,
-      });
-    });
-
     ws.on("message", ({ data: message }) => {
       console.info("WS >> ", message);
-      refetchProject();
+
+      if (message.event === "update") {
+        refetchProject();
+      } else if (message.event === "hello") {
+        ws.send({
+          event: "identify",
+          data: session.access_token,
+        });
+      } else if (message.event === "error") {
+        console.error("Error from WebSocket: ", message.data);
+      }
     });
   }, [projectId, session]);
 
