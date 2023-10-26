@@ -71,6 +71,7 @@ const ProjectPage: NextPageWithLayout = () => {
         <input
           className="mr-2 w-[350px] rounded-2xl border-2 p-2"
           value={project.token}
+          readOnly
           onClick={(ev) => (ev.target as HTMLInputElement).select()}
         />
         <Button
