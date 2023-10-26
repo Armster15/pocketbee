@@ -37,6 +37,8 @@ export const whatTheBuzz = {
     AppState.addEventListener("change", onAppStateChange);
 
     console.log("Hello from What the Buzz");
+    // TODO: Better handling of user id
+    userId = "1";
     sendStart();
   },
   identify: (_userId: string) => {
