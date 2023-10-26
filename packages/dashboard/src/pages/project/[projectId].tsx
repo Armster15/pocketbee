@@ -54,6 +54,10 @@ export default function ProjectPage() {
         console.error("Error from WebSocket: ", message.data);
       }
     });
+
+    return () => {
+      ws.close();
+    };
   }, [projectId, session]);
 
   return (
