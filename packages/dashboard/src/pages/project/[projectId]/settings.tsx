@@ -66,6 +66,23 @@ const ProjectPage: NextPageWithLayout = () => {
         <Button>Update Name</Button>
       </form>
 
+      <div className="mb-8">
+        <h3>Project Token</h3>
+        <input
+          className="mr-2 w-[350px] rounded-2xl border-2 p-2"
+          value={project.token}
+          onClick={(ev) => (ev.target as HTMLInputElement).select()}
+        />
+        <Button
+          onClick={async () => {
+            await navigator.clipboard.writeText(project.token);
+            alert("Copied");
+          }}
+        >
+          Copy
+        </Button>
+      </div>
+
       <Button onClick={handleDeleteProject}>Delete Project</Button>
     </>
   );
