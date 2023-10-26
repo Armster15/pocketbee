@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
+import { NextPageWithLayout } from "$/pages/_app";
 import { edenTreaty } from "@elysiajs/eden";
-import { Layout } from "$/components/Layout";
+import { RootLayout } from "$/components/RootLayout";
+import { ProjectLayout } from "$/components/ProjectLayout";
 import { api } from "$/utils/api";
-import { Button } from "$/components/Button";
 import { env } from "$/env.mjs";
 import type { App as IngestionApi } from "@what-the-buzz/ingestion-api";
 import { useSession } from "@supabase/auth-helpers-react";
@@ -12,26 +14,21 @@ const ingestionApi = edenTreaty<IngestionApi>(
   env.NEXT_PUBLIC_INGESTION_API_URL,
 );
 
-export default function ProjectPage() {
+const ProjectPage: NextPageWithLayout = () => {
   const router = useRouter();
   const projectId = router.query.projectId as string | undefined;
 
-  const { data: project, refetch: refetchProject } = api.projects.get.useQuery(
+  const {
+    data: project,
+    refetch: refetchProject,
+    isLoading,
+    isError,
+  } = api.projects.get.useQuery(
     { projectId: projectId! },
     { enabled: !!projectId },
   );
-  const deleteProjectMutation = api.projects.delete.useMutation();
-  const { refetch: refetchProjects } = api.projects.getAll.useQuery();
 
   const session = useSession();
-
-  async function deleteProject() {
-    if (!projectId) return;
-
-    await deleteProjectMutation.mutateAsync({ projectId });
-    await refetchProjects();
-    router.push("/");
-  }
 
   useEffect(() => {
     if (!projectId || !session) return;
@@ -60,10 +57,32 @@ export default function ProjectPage() {
     };
   }, [projectId, session]);
 
+  if (!project) {
+    if (isLoading) return <p>Loading...</p>;
+    if (isError) return <p className="text-red-500">Error</p>;
+  }
+
   return (
-    <Layout>
-      <pre>{JSON.stringify(project, undefined, 4)}</pre>
-      <Button onClick={deleteProject}>Delete Project</Button>
-    </Layout>
+    <>
+      <Head>
+        <title>{project.name} | What the Buzz</title>
+      </Head>
+
+      <div className="flex w-fit items-center space-x-2 rounded-3xl bg-gray-100 px-4 py-3">
+        <div className="h-4 w-4 rounded-full bg-green-500" />
+
+        <p className="text-gray-700">{project.activeUsers.length} online</p>
+      </div>
+    </>
   );
-}
+};
+
+ProjectPage.getLayout = (page) => {
+  return (
+    <RootLayout>
+      <ProjectLayout>{page}</ProjectLayout>
+    </RootLayout>
+  );
+};
+
+export default ProjectPage;

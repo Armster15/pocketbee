@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { type AppType } from "next/app";
+import { useState, type ReactElement, type ReactNode } from "react";
+import type { NextPage } from "next";
+import type { AppProps, AppType } from "next/app";
 import { api } from "$/utils/api";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import {
@@ -8,16 +9,26 @@ import {
 } from "@supabase/auth-helpers-react";
 import "$/styles/globals.css";
 
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
 const MyApp: AppType<{
   initialSession: Session;
-}> = ({ Component, pageProps }) => {
+}> = ({ Component, pageProps }: AppPropsWithLayout) => {
   const [supabaseClient] = useState(() => createPagesBrowserClient());
+
+  const getLayout = Component.getLayout ?? ((page) => page);
   return (
     <SessionContextProvider
       supabaseClient={supabaseClient}
       initialSession={pageProps.initialSession}
     >
-      <Component {...pageProps} />
+      {getLayout(<Component {...pageProps} />)}
     </SessionContextProvider>
   );
 };

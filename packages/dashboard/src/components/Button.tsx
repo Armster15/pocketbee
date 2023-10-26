@@ -5,7 +5,7 @@ export const Button = ({ className, ...props }: ButtonProps) => {
   return (
     <button
       className={clsx(
-        "rounded-2xl bg-white p-3 hover:shadow-md active:bg-gray-100/95",
+        "rounded-xl border-2 p-3 py-2 duration-100 hover:bg-gray-50/95 active:bg-gray-100",
         className,
       )}
       {...props}

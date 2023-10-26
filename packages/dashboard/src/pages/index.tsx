@@ -1,15 +1,22 @@
 import { Fragment, useState } from "react";
 import Link from "next/link";
+import Head from "next/head";
+import { NextPageWithLayout } from "$/pages/_app";
 import { api } from "$/utils/api";
 import { Dialog, Transition } from "@headlessui/react";
-import { Layout } from "$/components/Layout";
+import { RootLayout } from "$/components/RootLayout";
 import { Button } from "$/components/Button";
+import { IoAdd } from "react-icons/io5";
 
-export default function Home() {
+const Home: NextPageWithLayout = () => {
   const { data: projects, error, isLoading } = api.projects.getAll.useQuery();
 
   return (
-    <Layout>
+    <>
+      <Head>
+        <title>What the Buzz</title>
+      </Head>
+
       <CreateProjectButtonWithModal />
 
       <div className="mt-12 grid grid-cols-5 gap-12">
@@ -19,7 +26,7 @@ export default function Home() {
             <Link
               href={`/project/${project.id}`}
               key={project.id}
-              className="h-36 rounded-2xl bg-white p-5 hover:shadow-md active:bg-gray-100/95"
+              className="h-36 rounded-2xl border-2 bg-white p-5 duration-100 hover:shadow active:bg-gray-100/95"
             >
               {project.name}
             </Link>
@@ -27,11 +34,11 @@ export default function Home() {
 
         {projects && projects.length === 0 && <p>No projects (yet...)</p>}
       </div>
-    </Layout>
+    </>
   );
-}
+};
 
-export function CreateProjectButtonWithModal() {
+const CreateProjectButtonWithModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const createProjectMutation = api.projects.create.useMutation();
@@ -51,7 +58,13 @@ export function CreateProjectButtonWithModal() {
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>Create new project</Button>
+      <Button
+        className="flex items-center justify-center"
+        onClick={() => setIsOpen(true)}
+      >
+        <IoAdd className="mr-1" aria-hidden />
+        Create new project
+      </Button>
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
@@ -121,4 +134,10 @@ export function CreateProjectButtonWithModal() {
       </Transition>
     </>
   );
-}
+};
+
+Home.getLayout = (page) => {
+  return <RootLayout>{page}</RootLayout>;
+};
+
+export default Home;

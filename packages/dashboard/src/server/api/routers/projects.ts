@@ -24,6 +24,29 @@ export const projectsRouter = createTRPCRouter({
       return project;
     }),
 
+  rename: protectedProcedure
+    .input(z.object({ projectId: z.string(), name: z.string().min(1) }))
+    .mutation(async ({ input: { projectId, name }, ctx: { user, prisma } }) => {
+      const res = await niceTry.promise(async () =>
+        prisma.projects.update({
+          where: { id: projectId, userId: user.id },
+          data: {
+            name,
+          },
+        }),
+      );
+
+      // TODO: Better error handling instead of this generic try/catch all errors
+      if (!res) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Failed to rename project",
+        });
+      }
+
+      return;
+    }),
+
   delete: protectedProcedure
     .input(z.object({ projectId: z.string() }))
     .mutation(async ({ input: { projectId }, ctx: { user, prisma } }) => {
@@ -52,7 +75,7 @@ export const projectsRouter = createTRPCRouter({
   }),
 
   create: protectedProcedure
-    .input(z.object({ name: z.string() }))
+    .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ input: { name }, ctx: { user, prisma } }) => {
       await prisma.projects.create({
         data: {
