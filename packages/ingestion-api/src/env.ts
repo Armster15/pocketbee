@@ -7,6 +7,8 @@ export const env = createEnv({
     SUPABASE_ANON_KEY: z.string(),
     DATABASE_URL: z.string().url(),
   },
+  client: {},
+  clientPrefix: "",
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,
 });
