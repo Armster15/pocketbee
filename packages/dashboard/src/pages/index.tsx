@@ -7,6 +7,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { RootLayout } from "$/components/RootLayout";
 import { Button } from "$/components/Button";
 import { IoAdd } from "react-icons/io5";
+import { Skeleton } from "$/components/Skeleton";
 
 const Home: NextPageWithLayout = () => {
   const { data: projects, error, isLoading } = api.projects.getAll.useQuery();
@@ -19,20 +20,24 @@ const Home: NextPageWithLayout = () => {
 
       <CreateProjectButtonWithModal />
 
-      <div className="mt-12 grid grid-cols-5 gap-12">
-        {projects &&
-          projects.length > 0 &&
-          projects.map((project) => (
-            <Link
-              href={`/project/${project.id}`}
-              key={project.id}
-              className="h-36 rounded-2xl border-2 bg-white p-5 duration-100 hover:shadow active:bg-gray-100/95"
-            >
-              {project.name}
-            </Link>
-          ))}
+      <div className="mt-12">
+        {isLoading && !projects && <Skeleton withCircles={false} />}
 
-        {projects && projects.length === 0 && <p>No projects (yet...)</p>}
+        {projects && projects.length > 0 && (
+          <div className="grid gap-12 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
+            {projects.map((project) => (
+              <Link
+                href={`/project/${project.id}`}
+                key={project.id}
+                className="h-36 rounded-2xl border-2 bg-white p-5 duration-100 hover:shadow active:bg-gray-100/95"
+              >
+                {project.name}
+              </Link>
+            ))}
+
+            {projects && projects.length === 0 && <p>No projects (yet...)</p>}
+          </div>
+        )}
       </div>
     </>
   );
