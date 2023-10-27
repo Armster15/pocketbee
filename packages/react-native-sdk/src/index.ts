@@ -1,11 +1,16 @@
 import { AppState, type AppStateStatus } from "react-native";
 import { edenTreaty } from "@elysiajs/eden";
+import * as SecureStore from "expo-secure-store";
 import type { App as IngestionApi } from "@what-the-buzz/ingestion-api";
 
 let projectToken: string;
 let userId: string;
 
 const ingestionApi = edenTreaty<IngestionApi>("http://localhost:5050");
+
+const SECURE_STORE_OPTIONS: SecureStore.SecureStoreOptions = {
+  keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK,
+};
 
 async function onAppStateChange(status: AppStateStatus) {
   console.log(status);
@@ -32,16 +37,27 @@ async function sendEnd() {
 }
 
 export const whatTheBuzz = {
-  init: (_projectToken: string) => {
+  init: async (_projectToken: string) => {
     projectToken = _projectToken;
     AppState.addEventListener("change", onAppStateChange);
 
-    console.log("Hello from What the Buzz");
-    // TODO: Better handling of user id
-    userId = "1";
+    const _userId = await SecureStore.getItemAsync(
+      "whatthebuzz_uid",
+      SECURE_STORE_OPTIONS,
+    );
+    if (_userId) {
+      userId = _userId;
+    } else {
+      userId = Math.random().toString(36).substring(4);
+      await SecureStore.setItemAsync(
+        "whatthebuzz_uid",
+        userId,
+        SECURE_STORE_OPTIONS,
+      );
+    }
+
+    console.log("🐝 Hello from What the Buzz");
+    console.log(`🐝 User ID: ${userId}`);
     sendStart();
-  },
-  identify: (_userId: string) => {
-    userId = _userId;
   },
 };
