@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { cors } from "@elysiajs/cors";
 import { EventEmitter } from "node:events";
-import { PrismaClient } from "@what-the-buzz/db";
+import { PrismaClient } from "@pocketbee/db";
 import {
   createClient as createSupabaseClient,
   type User,

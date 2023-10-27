@@ -7,7 +7,7 @@ export const RootLayout = ({ children }: PropsWithChildren) => {
     <div className="min-h-screen p-8">
       <nav className="flex items-center justify-between">
         <Link href="/">
-          <h1 className="text-3xl font-semibold underline">What the Buzz</h1>
+          <h1 className="text-3xl font-semibold underline">Pocketbee</h1>
         </Link>
 
         <UserDropdown />

@@ -1,7 +1,7 @@
 import { AppState, type AppStateStatus } from "react-native";
 import { edenTreaty } from "@elysiajs/eden";
 import * as SecureStore from "expo-secure-store";
-import type { App as IngestionApi } from "@what-the-buzz/ingestion-api";
+import type { App as IngestionApi } from "@pocketbee/ingestion-api";
 
 let projectToken: string;
 let userId: string;
@@ -36,13 +36,13 @@ async function sendEnd() {
   });
 }
 
-export const whatTheBuzz = {
+export const pocketbee = {
   init: async (_projectToken: string) => {
     projectToken = _projectToken;
     AppState.addEventListener("change", onAppStateChange);
 
     const _userId = await SecureStore.getItemAsync(
-      "whatthebuzz_uid",
+      "pocketbee_uid",
       SECURE_STORE_OPTIONS,
     );
     if (_userId) {
@@ -50,13 +50,13 @@ export const whatTheBuzz = {
     } else {
       userId = Math.random().toString(36).substring(4);
       await SecureStore.setItemAsync(
-        "whatthebuzz_uid",
+        "pocketbee_uid",
         userId,
         SECURE_STORE_OPTIONS,
       );
     }
 
-    console.log("🐝 Hello from What the Buzz");
+    console.log("🐝 Hello from Pocketbee");
     console.log(`🐝 User ID: ${userId}`);
     sendStart();
   },

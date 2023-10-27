@@ -8,7 +8,7 @@ import { RootLayout } from "$/components/RootLayout";
 import { ProjectLayout } from "$/components/ProjectLayout";
 import { api } from "$/utils/api";
 import { env } from "$/env.mjs";
-import type { App as IngestionApi } from "@what-the-buzz/ingestion-api";
+import type { App as IngestionApi } from "@pocketbee/ingestion-api";
 import { useSession } from "@supabase/auth-helpers-react";
 import Skeleton from "react-loading-skeleton";
 
@@ -75,7 +75,7 @@ const ProjectPage: NextPageWithLayout = () => {
     <>
       <Head>
         <title>
-          {project?.name ? `${project.name} | What the Buzz` : "What the Buzz"}
+          {project?.name ? `${project.name} | Pocketbee` : "Pocketbee"}
         </title>
       </Head>
 

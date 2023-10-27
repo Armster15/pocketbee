@@ -15,7 +15,7 @@ const Home: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>What the Buzz</title>
+        <title>Pocketbee</title>
       </Head>
 
       <CreateProjectButtonWithModal />

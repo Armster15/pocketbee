@@ -53,7 +53,7 @@ const ProjectPage: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>Settings | What the Buzz</title>
+        <title>Settings | Pocketbee</title>
       </Head>
 
       <form onSubmit={handleRenameProject} className="mb-6">

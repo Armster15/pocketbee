@@ -1,5 +1,5 @@
 {
-  "name": "@what-the-buzz/dashboard",
+  "name": "@pocketbee/dashboard",
   "version": "0.0.0",
   "scripts": {
     "dev": "next dev",
@@ -21,7 +21,7 @@
     "@trpc/next": "^10.37.1",
     "@trpc/react-query": "^10.37.1",
     "@trpc/server": "^10.37.1",
-    "@what-the-buzz/db": "workspace:*",
+    "@pocketbee/db": "workspace:*",
     "clsx": "^2.0.0",
     "next": "^13.5.4",
     "nice-try": "^3.0.1",
@@ -40,7 +40,7 @@
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.3.0",
     "@typescript-eslint/parser": "^6.3.0",
-    "@what-the-buzz/ingestion-api": "workspace:*",
+    "@pocketbee/ingestion-api": "workspace:*",
     "autoprefixer": "^10.4.14",
     "eslint": "^8.47.0",
     "eslint-config-next": "^13.5.4",

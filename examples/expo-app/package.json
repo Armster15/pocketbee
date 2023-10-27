@@ -1,5 +1,5 @@
 {
-  "name": "@what-the-buzz/expo-app",
+  "name": "@pocketbee/expo-app",
   "version": "1.0.0",
   "main": "./index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.7.1",
-    "@what-the-buzz/react-native-sdk": "workspace:../../packages/react-native-sdk",
+    "@pocketbee/react-native-sdk": "workspace:*",
     "expo": "~49.0.13",
     "expo-secure-store": "^12.5.0",
     "expo-status-bar": "~1.6.0",

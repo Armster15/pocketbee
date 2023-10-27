@@ -1,9 +1,9 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-import { whatTheBuzz } from "@what-the-buzz/react-native-sdk";
+import { pocketbee } from "@pocketbee/react-native-sdk";
 import { env } from "./env";
 
-whatTheBuzz.init(env.EXPO_PUBLIC_WHATTHEBUZZ_TOKEN);
+pocketbee.init(env.EXPO_PUBLIC_POCKETBEE_TOKEN);
 
 export function App() {
   return (

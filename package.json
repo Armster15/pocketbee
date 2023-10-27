@@ -1,5 +1,5 @@
 {
-  "name": "what-the-buzz",
+  "name": "pocketbee",
   "private": true,
   "workspaces": [
     "packages/*",

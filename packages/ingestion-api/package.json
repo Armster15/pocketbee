@@ -1,5 +1,5 @@
 {
-  "name": "@what-the-buzz/ingestion-api",
+  "name": "@pocketbee/ingestion-api",
   "version": "0.0.0",
   "main": "./src/index.ts",
   "scripts": {
@@ -9,7 +9,7 @@
     "@elysiajs/cors": "^0.7.1",
     "@supabase/supabase-js": "^2.38.3",
     "@t3-oss/env-core": "^0.7.1",
-    "@what-the-buzz/db": "workspace:*",
+    "@pocketbee/db": "workspace:*",
     "elysia": "^0.7.18",
     "zod": "^3.22.4"
   },
