@@ -93,6 +93,7 @@ next-env.d.ts
 # Nuxt.js build / generate output
 .nuxt
 dist
+!/packages/react-native-sdk/dist
 
 # Gatsby files
 .cache/
