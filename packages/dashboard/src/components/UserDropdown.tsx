@@ -13,8 +13,6 @@ export const UserDropdown = () => {
 
   if (!user) return null;
 
-  console.log(user);
-
   return (
     <Menu as="div" className="relative inline-block text-left">
       <Menu.Button
