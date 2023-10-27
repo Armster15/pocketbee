@@ -2,15 +2,14 @@ import { AppState, type AppStateStatus } from "react-native";
 import { edenTreaty } from "@elysiajs/eden";
 import * as SecureStore from "expo-secure-store";
 import type { App as IngestionApi } from "@pocketbee/ingestion-api";
+import type { Options, Store } from "./types";
 
-let projectToken: string;
-let userId: string;
-
-const ingestionApi = edenTreaty<IngestionApi>("http://localhost:5050");
-
+const DEFAULT_API_ROOT = "http://localhost:5050";
 const SECURE_STORE_OPTIONS: SecureStore.SecureStoreOptions = {
   keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK,
 };
+
+let store: Store;
 
 async function onAppStateChange(status: AppStateStatus) {
   console.log(status);
@@ -23,31 +22,29 @@ async function onAppStateChange(status: AppStateStatus) {
 }
 
 async function sendStart() {
-  await ingestionApi.start.post({
-    projectToken,
-    userId,
+  await store.ingestionApi.start.post({
+    projectToken: store.projectToken,
+    userId: store.userId,
   });
 }
 
 async function sendEnd() {
-  ingestionApi.end.post({
-    projectToken,
-    userId,
+  store.ingestionApi.end.post({
+    projectToken: store.projectToken,
+    userId: store.userId,
   });
 }
 
 export const pocketbee = {
-  init: async (_projectToken: string) => {
-    projectToken = _projectToken;
+  init: async (options: Options) => {
     AppState.addEventListener("change", onAppStateChange);
 
-    const _userId = await SecureStore.getItemAsync(
+    let userId = await SecureStore.getItemAsync(
       "pocketbee_uid",
       SECURE_STORE_OPTIONS,
     );
-    if (_userId) {
-      userId = _userId;
-    } else {
+
+    if (!userId) {
       userId = Math.random().toString(36).substring(4);
       await SecureStore.setItemAsync(
         "pocketbee_uid",
@@ -55,6 +52,16 @@ export const pocketbee = {
         SECURE_STORE_OPTIONS,
       );
     }
+
+    const ingestionApi = edenTreaty<IngestionApi>(
+      options.apiRoot ?? DEFAULT_API_ROOT,
+    );
+
+    store = {
+      ...options,
+      userId,
+      ingestionApi,
+    };
 
     console.log("🐝 Hello from Pocketbee");
     console.log(`🐝 User ID: ${userId}`);

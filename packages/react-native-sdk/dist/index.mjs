@@ -1,85 +1,59 @@
-var __async = (__this, __arguments, generator) => {
-  return new Promise((resolve, reject) => {
-    var fulfilled = (value) => {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var rejected = (value) => {
-      try {
-        step(generator.throw(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var step = (x) =>
-      x.done
-        ? resolve(x.value)
-        : Promise.resolve(x.value).then(fulfilled, rejected);
-    step((generator = generator.apply(__this, __arguments)).next());
-  });
-};
-
 // src/index.ts
 import { AppState } from "react-native";
 import { edenTreaty } from "@elysiajs/eden";
 import * as SecureStore from "expo-secure-store";
-var projectToken;
-var userId;
-var ingestionApi = edenTreaty("http://localhost:5050");
+var DEFAULT_API_ROOT = "http://localhost:5050";
 var SECURE_STORE_OPTIONS = {
   keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK,
 };
-function onAppStateChange(status) {
-  return __async(this, null, function* () {
-    console.log(status);
-    if (status === "background") {
-      yield sendEnd();
-    } else if (status === "active") {
-      yield sendStart();
-    }
+var store;
+async function onAppStateChange(status) {
+  console.log(status);
+  if (status === "background") {
+    await sendEnd();
+  } else if (status === "active") {
+    await sendStart();
+  }
+}
+async function sendStart() {
+  await store.ingestionApi.start.post({
+    projectToken: store.projectToken,
+    userId: store.userId,
   });
 }
-function sendStart() {
-  return __async(this, null, function* () {
-    yield ingestionApi.start.post({
-      projectToken,
-      userId,
-    });
-  });
-}
-function sendEnd() {
-  return __async(this, null, function* () {
-    ingestionApi.end.post({
-      projectToken,
-      userId,
-    });
+async function sendEnd() {
+  store.ingestionApi.end.post({
+    projectToken: store.projectToken,
+    userId: store.userId,
   });
 }
 var pocketbee = {
-  init: (_projectToken) =>
-    __async(void 0, null, function* () {
-      projectToken = _projectToken;
-      AppState.addEventListener("change", onAppStateChange);
-      const _userId = yield SecureStore.getItemAsync(
+  init: async (options) => {
+    var _a;
+    AppState.addEventListener("change", onAppStateChange);
+    let userId = await SecureStore.getItemAsync(
+      "pocketbee_uid",
+      SECURE_STORE_OPTIONS,
+    );
+    if (!userId) {
+      userId = Math.random().toString(36).substring(4);
+      await SecureStore.setItemAsync(
         "pocketbee_uid",
+        userId,
         SECURE_STORE_OPTIONS,
       );
-      if (_userId) {
-        userId = _userId;
-      } else {
-        userId = Math.random().toString(36).substring(4);
-        yield SecureStore.setItemAsync(
-          "pocketbee_uid",
-          userId,
-          SECURE_STORE_OPTIONS,
-        );
-      }
-      console.log("\u{1F41D} Hello from Pocketbee");
-      console.log(`\u{1F41D} User ID: ${userId}`);
-      sendStart();
-    }),
+    }
+    const ingestionApi = edenTreaty(
+      (_a = options.apiRoot) != null ? _a : DEFAULT_API_ROOT,
+    );
+    store = {
+      ...options,
+      userId,
+      ingestionApi,
+    };
+    console.log("\u{1F41D} Hello from Pocketbee");
+    console.log(`\u{1F41D} User ID: ${userId}`);
+    sendStart();
+  },
 };
 export { pocketbee };
