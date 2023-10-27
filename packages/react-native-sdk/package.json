@@ -14,8 +14,8 @@
   },
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
-    "watch": "npm run build -- --watch src",
-    "prepublishOnly": "npm run build"
+    "watch": "bun run build -- --watch src",
+    "prepublishOnly": "bun run build"
   },
   "peerDependencies": {
     "expo-secure-store": ">10",
