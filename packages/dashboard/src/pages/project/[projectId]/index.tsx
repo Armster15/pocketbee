@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import clsx from "clsx";
 import { NextPageWithLayout } from "$/pages/_app";
 import { edenTreaty } from "@elysiajs/eden";
 import { RootLayout } from "$/components/RootLayout";
@@ -14,9 +15,12 @@ const ingestionApi = edenTreaty<IngestionApi>(
   env.NEXT_PUBLIC_INGESTION_API_URL,
 );
 
+const PING_CLASSNAME = "animate-[ping_1s_cubic-bezier(0,0,0.2,1)]";
+
 const ProjectPage: NextPageWithLayout = () => {
   const router = useRouter();
   const projectId = router.query.projectId as string | undefined;
+  const pingRef = useRef<HTMLDivElement | null>(null);
 
   const {
     data: project,
@@ -42,6 +46,10 @@ const ProjectPage: NextPageWithLayout = () => {
 
       if (message.event === "update") {
         refetchProject();
+        pingRef.current?.classList.remove(PING_CLASSNAME);
+        setTimeout(() => {
+          pingRef.current?.classList.add(PING_CLASSNAME);
+        }, 100);
       } else if (message.event === "hello") {
         ws.send({
           event: "identify",
@@ -68,10 +76,24 @@ const ProjectPage: NextPageWithLayout = () => {
         <title>{project.name} | What the Buzz</title>
       </Head>
 
-      <div className="flex w-fit items-center space-x-2 rounded-3xl bg-gray-100 px-4 py-3">
-        <div className="h-4 w-4 rounded-full bg-green-500" />
+      <div className="flex h-48 w-48 flex-col justify-between rounded-2xl border-2 p-4">
+        <div className="relative">
+          <div className="absolute h-5 w-5 rounded-full bg-green-500" />
+          <div
+            ref={pingRef}
+            className={clsx(
+              `absolute h-5 w-5 rounded-full bg-green-500`,
+              PING_CLASSNAME,
+            )}
+          />
+        </div>
 
-        <p className="text-gray-700">{project.activeUsers.length} online</p>
+        <div>
+          <p className="my-1 text-7xl">{project.activeUsers.length}</p>
+          <p className="text-gray-500">
+            <span className="sr-only">users </span>online now
+          </p>
+        </div>
       </div>
     </>
   );
