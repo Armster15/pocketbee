@@ -59,12 +59,16 @@ export const pocketbee = {
 
     store = {
       ...options,
+      debugLogs: options.debugLogs ?? __DEV__ ? true : false,
       userId,
       ingestionApi,
     };
 
-    console.log("🐝 Hello from Pocketbee");
-    console.log(`🐝 User ID: ${userId}`);
+    if (store.debugLogs) {
+      console.log("🐝 Hello from Pocketbee");
+      console.log(`🐝 User ID: ${userId}`);
+    }
+
     sendStart();
   },
 };

@@ -29,7 +29,7 @@ async function sendEnd() {
 }
 var pocketbee = {
   init: async (options) => {
-    var _a;
+    var _a, _b;
     AppState.addEventListener("change", onAppStateChange);
     let userId = await SecureStore.getItemAsync(
       "pocketbee_uid",
@@ -48,11 +48,16 @@ var pocketbee = {
     );
     store = {
       ...options,
+      debugLogs: ((_b = options.debugLogs) != null ? _b : __DEV__)
+        ? true
+        : false,
       userId,
       ingestionApi,
     };
-    console.log("\u{1F41D} Hello from Pocketbee");
-    console.log(`\u{1F41D} User ID: ${userId}`);
+    if (store.debugLogs) {
+      console.log("\u{1F41D} Hello from Pocketbee");
+      console.log(`\u{1F41D} User ID: ${userId}`);
+    }
     sendStart();
   },
 };
