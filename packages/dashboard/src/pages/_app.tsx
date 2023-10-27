@@ -8,6 +8,7 @@ import {
   type Session,
 } from "@supabase/auth-helpers-react";
 import "$/styles/globals.css";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;

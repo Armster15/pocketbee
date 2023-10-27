@@ -1,9 +1,10 @@
 import { type PropsWithChildren, type ComponentProps } from "react";
+import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { api } from "$/utils/api";
-import clsx from "clsx";
 import { IoStatsChart, IoSettings } from "react-icons/io5";
+import Skeleton from "react-loading-skeleton";
 
 export const ProjectLayout = ({ children }: PropsWithChildren) => {
   const router = useRouter();
@@ -17,7 +18,9 @@ export const ProjectLayout = ({ children }: PropsWithChildren) => {
   return (
     <div className="flex">
       <aside className="mr-12 w-56">
-        <h2 className="truncate text-2xl font-semibold">{project?.name}</h2>
+        <h2 className="truncate text-2xl font-semibold">
+          {project?.name ?? <Skeleton />}
+        </h2>
 
         <div className="mt-5 grid gap-1">
           <ActiveLink href={`/project/${projectId}`}>

@@ -10,6 +10,7 @@ import { api } from "$/utils/api";
 import { env } from "$/env.mjs";
 import type { App as IngestionApi } from "@what-the-buzz/ingestion-api";
 import { useSession } from "@supabase/auth-helpers-react";
+import Skeleton from "react-loading-skeleton";
 
 const ingestionApi = edenTreaty<IngestionApi>(
   env.NEXT_PUBLIC_INGESTION_API_URL,
@@ -65,35 +66,46 @@ const ProjectPage: NextPageWithLayout = () => {
     };
   }, [projectId, session]);
 
-  if (!project) {
-    if (isLoading) return <p>Loading...</p>;
-    if (isError) return <p className="text-red-500">Error</p>;
-  }
+  // if (!project) {
+  //   if (isLoading) return <p>Loading...</p>;
+  //   if (isError) return <p className="text-red-500">Error</p>;
+  // }
 
   return (
     <>
       <Head>
-        <title>{project.name} | What the Buzz</title>
+        <title>
+          {project?.name ? `${project.name} | What the Buzz` : "What the Buzz"}
+        </title>
       </Head>
 
       <div className="flex h-48 w-48 flex-col justify-between rounded-2xl border-2 p-4">
-        <div className="relative">
-          <div className="absolute h-5 w-5 rounded-full bg-green-500" />
-          <div
-            ref={pingRef}
-            className={clsx(
-              `absolute h-5 w-5 rounded-full bg-green-500`,
-              PING_CLASSNAME,
-            )}
-          />
-        </div>
+        {(() => {
+          if (isLoading && !project) return <Skeleton count={6} />;
+          if (isError) return <p className="text-red-500">An error occurred</p>;
 
-        <div>
-          <p className="my-1 text-7xl">{project.activeUsers.length}</p>
-          <p className="text-gray-500">
-            <span className="sr-only">users </span>online now
-          </p>
-        </div>
+          return (
+            <>
+              <div className="relative">
+                <div className="absolute h-5 w-5 rounded-full bg-green-500" />
+                <div
+                  ref={pingRef}
+                  className={clsx(
+                    `absolute h-5 w-5 rounded-full bg-green-500`,
+                    PING_CLASSNAME,
+                  )}
+                />
+              </div>
+
+              <div>
+                <p className="my-1 text-7xl">{project.activeUsers.length}</p>
+                <p className="text-gray-500">
+                  <span className="sr-only">users </span>online now
+                </p>
+              </div>
+            </>
+          );
+        })()}
       </div>
     </>
   );

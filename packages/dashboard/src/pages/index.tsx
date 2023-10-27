@@ -7,7 +7,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { RootLayout } from "$/components/RootLayout";
 import { Button } from "$/components/Button";
 import { IoAdd } from "react-icons/io5";
-import { Skeleton } from "$/components/Skeleton";
+import Skeleton from "react-loading-skeleton";
 
 const Home: NextPageWithLayout = () => {
   const { data: projects, error, isLoading } = api.projects.getAll.useQuery();
@@ -21,7 +21,7 @@ const Home: NextPageWithLayout = () => {
       <CreateProjectButtonWithModal />
 
       <div className="mt-12">
-        {isLoading && !projects && <Skeleton withCircles={false} />}
+        {isLoading && !projects && <Skeleton count={6} />}
 
         {projects && projects.length > 0 && (
           <div className="grid gap-12 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">

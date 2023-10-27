@@ -5,6 +5,7 @@ import { RootLayout } from "$/components/RootLayout";
 import { ProjectLayout } from "$/components/ProjectLayout";
 import { api } from "$/utils/api";
 import { Button } from "$/components/Button";
+import Skeleton from "react-loading-skeleton";
 import type { FormProps } from "react-html-props";
 
 const ProjectPage: NextPageWithLayout = () => {
@@ -45,7 +46,7 @@ const ProjectPage: NextPageWithLayout = () => {
   };
 
   if (!project) {
-    if (isLoading) return <p>Loading...</p>;
+    if (isLoading) return <Skeleton count={7} />;
     if (isError) return <p className="text-red-500">Error</p>;
   }
 
