@@ -1,15 +1,16 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import prependHttp from "prepend-http";
 
-export default function Component() {
+export default function AuthPage() {
   const supabase = createClientComponentClient();
-  const authRedirectUrl = new URL(
-    "/api/auth/callback",
+
+  const rootUrl =
     process.env.NEXT_PUBLIC_SITE_URL ??
-      process.env.NEXT_PUBLIC_VERCEL_URL ??
-      `http://localhost:3000`,
-  );
+    process.env.NEXT_PUBLIC_VERCEL_URL ??
+    "http://localhost:3000";
+  const authRedirectUrl = new URL("/api/auth/callback", prependHttp(rootUrl));
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
