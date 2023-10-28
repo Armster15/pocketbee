@@ -1,16 +1,19 @@
+import { useEffect, useState } from "react";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import prependHttp from "prepend-http";
 
 export default function AuthPage() {
+  const [authRedirectUrl, setAuthRedirectUrl] = useState<string | undefined>(
+    undefined,
+  );
   const supabase = createClientComponentClient();
 
-  const rootUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    process.env.NEXT_PUBLIC_VERCEL_URL ??
-    "http://localhost:3000";
-  const authRedirectUrl = new URL("/api/auth/callback", prependHttp(rootUrl));
+  useEffect(() => {
+    setAuthRedirectUrl(
+      new URL("/api/auth/callback", window.location.origin).toString(),
+    );
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -21,7 +24,7 @@ export default function AuthPage() {
         appearance={{ theme: ThemeSupa }}
         showLinks={false}
         providers={["github"]}
-        redirectTo={authRedirectUrl.toString()}
+        redirectTo={authRedirectUrl}
       />
     </div>
   );
