@@ -7,9 +7,9 @@
   },
   "dependencies": {
     "@elysiajs/cors": "^0.7.1",
+    "@pocketbee/db": "workspace:*",
     "@supabase/supabase-js": "^2.38.3",
     "@t3-oss/env-core": "^0.7.1",
-    "@pocketbee/db": "workspace:*",
     "elysia": "^0.7.18",
     "zod": "^3.22.4"
   },
