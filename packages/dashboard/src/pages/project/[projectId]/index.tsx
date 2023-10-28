@@ -98,7 +98,7 @@ const ProjectPage: NextPageWithLayout = () => {
               </div>
 
               <div>
-                <p className="my-1 text-7xl">{project.activeUsers.length}</p>
+                <p className="my-1 text-7xl">{project.active_users.length}</p>
                 <p className="text-gray-500">
                   <span className="sr-only">users </span>online now
                 </p>
