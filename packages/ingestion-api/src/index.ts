@@ -25,6 +25,7 @@ const app = new Elysia()
   .onError(({ code, error, set }) => {
     console.error(error);
   })
+  .get("/", () => "Hello World!")
   .post(
     "/start",
 
