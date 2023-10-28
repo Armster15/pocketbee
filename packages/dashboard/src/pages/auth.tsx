@@ -4,6 +4,12 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function Component() {
   const supabase = createClientComponentClient();
+  const authRedirectUrl = new URL(
+    "/api/auth/callback",
+    process.env.NEXT_PUBLIC_SITE_URL ??
+      process.env.NEXT_PUBLIC_VERCEL_URL ??
+      `http://localhost:3000`,
+  );
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -14,7 +20,7 @@ export default function Component() {
         appearance={{ theme: ThemeSupa }}
         showLinks={false}
         providers={["github"]}
-        redirectTo={"http://localhost:3000/api/auth/callback"}
+        redirectTo={authRedirectUrl.toString()}
       />
     </div>
   );
