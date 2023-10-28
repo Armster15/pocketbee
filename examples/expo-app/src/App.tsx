@@ -3,7 +3,9 @@ import { StyleSheet, Text, View } from "react-native";
 import { pocketbee } from "@pocketbee/react-native-sdk";
 import { env } from "./env";
 
-pocketbee.init(env.EXPO_PUBLIC_POCKETBEE_TOKEN);
+pocketbee.init({
+  projectToken: env.EXPO_PUBLIC_POCKETBEE_TOKEN,
+});
 
 export function App() {
   return (
