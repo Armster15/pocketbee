@@ -9,7 +9,7 @@ export const projectsRouter = createTRPCRouter({
     .query(async ({ input: { projectId }, ctx: { user, prisma } }) => {
       const project = await niceTry.promise(async () =>
         prisma.projects.findFirst({
-          where: { id: projectId, userId: user.id },
+          where: { id: projectId, user_id: user.id },
         }),
       );
 
@@ -29,7 +29,7 @@ export const projectsRouter = createTRPCRouter({
     .mutation(async ({ input: { projectId, name }, ctx: { user, prisma } }) => {
       const res = await niceTry.promise(async () =>
         prisma.projects.update({
-          where: { id: projectId, userId: user.id },
+          where: { id: projectId, user_id: user.id },
           data: {
             name,
           },
@@ -52,7 +52,7 @@ export const projectsRouter = createTRPCRouter({
     .mutation(async ({ input: { projectId }, ctx: { user, prisma } }) => {
       const res = await niceTry.promise(async () =>
         prisma.projects.delete({
-          where: { id: projectId, userId: user.id },
+          where: { id: projectId, user_id: user.id },
         }),
       );
 
@@ -69,7 +69,7 @@ export const projectsRouter = createTRPCRouter({
 
   getAll: protectedProcedure.query(async ({ ctx: { user, prisma } }) => {
     const projects = await prisma.projects.findMany({
-      where: { userId: user.id },
+      where: { user_id: user.id },
     });
     return projects;
   }),
@@ -80,7 +80,7 @@ export const projectsRouter = createTRPCRouter({
       await prisma.projects.create({
         data: {
           name,
-          userId: user.id,
+          user_id: user.id,
         },
       });
     }),

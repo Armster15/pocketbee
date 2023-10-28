@@ -35,13 +35,13 @@ const app = new Elysia()
         where: {
           token: projectToken,
           NOT: {
-            activeUsers: {
+            active_users: {
               has: userId,
             },
           },
         },
         data: {
-          activeUsers: {
+          active_users: {
             push: userId,
           },
         },
@@ -68,19 +68,19 @@ const app = new Elysia()
           token: projectToken,
         },
         select: {
-          activeUsers: true,
+          active_users: true,
         },
       });
 
       if (!activeUsersQuery) return;
-      const { activeUsers } = activeUsersQuery;
+      const { active_users: activeUsers } = activeUsersQuery;
 
       const { id: projectId } = await prisma.projects.update({
         where: {
           token: projectToken,
         },
         data: {
-          activeUsers: {
+          active_users: {
             set: activeUsers.filter((uid) => uid !== userId),
           },
         },
@@ -131,7 +131,7 @@ const app = new Elysia()
 
       const project = await prisma.projects.findUnique({
         where: {
-          userId: user.id,
+          user_id: user.id,
           id: ws.data.query.projectId,
         },
       });
