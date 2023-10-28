@@ -5,6 +5,7 @@ import { env } from "./env";
 
 pocketbee.init({
   projectToken: env.EXPO_PUBLIC_POCKETBEE_TOKEN,
+  apiRoot: env.EXPO_PUBLIC_INGESTION_API_URL,
 });
 
 export function App() {
