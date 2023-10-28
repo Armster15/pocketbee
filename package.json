@@ -6,7 +6,8 @@
     "examples/*"
   ],
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky install && bun run db:generate",
+    "db:generate": "bun run --cwd packages/db db:generate"
   },
   "devDependencies": {
     "husky": "^8.0.3",
