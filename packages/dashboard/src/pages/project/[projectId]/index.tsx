@@ -49,6 +49,11 @@ const ProjectPage: NextPageWithLayout = () => {
               ...(payload.new ?? {}),
             };
           });
+
+          pingRef.current?.classList.remove(PING_CLASSNAME);
+          setTimeout(() => {
+            pingRef.current?.classList.add(PING_CLASSNAME);
+          }, 100);
         },
       )
       .subscribe();
