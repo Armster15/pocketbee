@@ -2,7 +2,9 @@
   "name": "@pocketbee/ingestion-api",
   "main": "index.ts",
   "scripts": {
-    "start": "node --loader esbuild-register/loader -r esbuild-register ./index.ts"
+    "dev": "node --loader esbuild-register/loader -r esbuild-register ./index.ts",
+    "build": "esbuild index.ts --platform=node --format=cjs --outfile=dist/index.js --bundle",
+    "serve": "node ./dist/index.js"
   },
   "dependencies": {
     "@pocketbee/db": "workspace:*",
