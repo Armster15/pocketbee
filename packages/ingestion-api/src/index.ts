@@ -2,6 +2,8 @@ import { WebSocketServer } from "ws";
 import { PrismaClient } from "@pocketbee/db";
 import url from "node:url";
 import * as dotenv from "dotenv";
+import { wsReqSchema, type WSResSchema } from "./schema";
+import niceTry from "nice-try";
 
 dotenv.config();
 
@@ -61,6 +63,33 @@ wss.on("connection", async function connection(ws, req) {
         console.error(err);
         ws.close(1011, "An error occurred");
       }
+    }
+  });
+
+  ws.on("message", async (data, isBinary) => {
+    const message = isBinary ? data : data.toString();
+    const parseRes = await wsReqSchema.safeParseAsync(
+      niceTry(() => JSON.parse(message as any)),
+    );
+
+    if (!parseRes.success) {
+      ws.send(
+        JSON.stringify({
+          event: "error",
+          data: "Invalid payload",
+        } satisfies WSResSchema),
+      );
+      return;
+    }
+
+    const { event } = parseRes.data;
+
+    if (event === "ping") {
+      ws.send(
+        JSON.stringify({
+          event: "pong",
+        } satisfies WSResSchema),
+      );
     }
   });
 

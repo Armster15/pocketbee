@@ -8,6 +8,7 @@ var SECURE_STORE_OPTIONS = {
 };
 var store;
 var ws = void 0;
+var wsPingIntervalId = void 0;
 async function onAppStateChange(status) {
   console.log(`\u{1F41D} Pocketbee App Status: ${status}`);
   if (status === "background") {
@@ -26,6 +27,9 @@ async function sendStart() {
     (ws && (ws.readyState === ws.CLOSING || ws.readyState === ws.CLOSED))
   ) {
     ws = new WebSocket(url.href);
+    wsPingIntervalId = window.setInterval(() => {
+      ws == null ? void 0 : ws.send(JSON.stringify({ event: "ping" }));
+    }, 1e3 * 60);
   }
   if (store.debugLogs) {
     ws.onerror = (ev) => {
@@ -44,6 +48,9 @@ async function sendStart() {
 }
 async function sendEnd() {
   ws == null ? void 0 : ws.close(1e3);
+  if (wsPingIntervalId) {
+    clearInterval(wsPingIntervalId);
+  }
 }
 var pocketbee = {
   init: async (options) => {
