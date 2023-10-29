@@ -1,8 +1,8 @@
 // src/index.ts
 import { AppState } from "react-native";
-import { edenTreaty } from "@elysiajs/eden";
+import urlJoin from "url-join";
 import * as SecureStore from "expo-secure-store";
-var DEFAULT_API_ROOT = "http://localhost:5050";
+var DEFAULT_API_ROOT = "http://localhost:3000/api/ingestion/";
 var SECURE_STORE_OPTIONS = {
   keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK,
 };
@@ -15,21 +15,40 @@ async function onAppStateChange(status) {
     await sendStart();
   }
 }
+async function ingestionApi(endpoint, options) {
+  var _a;
+  const { headers, ...otherOptions } = options != null ? options : {};
+  return await fetch(
+    urlJoin((_a = store.apiRoot) != null ? _a : DEFAULT_API_ROOT, endpoint),
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
+      ...otherOptions,
+    },
+  );
+}
 async function sendStart() {
-  await store.ingestionApi.start.post({
-    projectToken: store.projectToken,
-    userId: store.userId,
+  await ingestionApi("start", {
+    body: JSON.stringify({
+      projectToken: store.projectToken,
+      userId: store.userId,
+    }),
   });
 }
 async function sendEnd() {
-  store.ingestionApi.end.post({
-    projectToken: store.projectToken,
-    userId: store.userId,
+  await ingestionApi("end", {
+    body: JSON.stringify({
+      projectToken: store.projectToken,
+      userId: store.userId,
+    }),
   });
 }
 var pocketbee = {
   init: async (options) => {
-    var _a, _b;
+    var _a;
     AppState.addEventListener("change", onAppStateChange);
     let userId = await SecureStore.getItemAsync(
       "pocketbee_uid",
@@ -43,16 +62,12 @@ var pocketbee = {
         SECURE_STORE_OPTIONS,
       );
     }
-    const ingestionApi = edenTreaty(
-      (_a = options.apiRoot) != null ? _a : DEFAULT_API_ROOT,
-    );
     store = {
       ...options,
-      debugLogs: ((_b = options.debugLogs) != null ? _b : __DEV__)
+      debugLogs: ((_a = options.debugLogs) != null ? _a : __DEV__)
         ? true
         : false,
       userId,
-      ingestionApi,
     };
     if (store.debugLogs) {
       console.log("\u{1F41D} Hello from Pocketbee");

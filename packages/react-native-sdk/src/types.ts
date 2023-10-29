@@ -8,5 +8,4 @@ export interface Options {
 
 export interface Store extends Options {
   userId: string;
-  // ingestionApi: EdenTreaty.Create<IngestionApi>;
 }

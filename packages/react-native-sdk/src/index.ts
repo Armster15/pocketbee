@@ -1,11 +1,9 @@
-// TODO: Reimplement start/end mutations w/ TRPC
-
 import { AppState, type AppStateStatus } from "react-native";
-import { edenTreaty } from "@elysiajs/eden";
+import urlJoin from "url-join";
 import * as SecureStore from "expo-secure-store";
 import type { Options, Store } from "./types";
 
-const DEFAULT_API_ROOT = "http://localhost:5050";
+const DEFAULT_API_ROOT = "http://localhost:3000/api/ingestion/";
 const SECURE_STORE_OPTIONS: SecureStore.SecureStoreOptions = {
   keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK,
 };
@@ -22,18 +20,35 @@ async function onAppStateChange(status: AppStateStatus) {
   }
 }
 
+async function ingestionApi(endpoint: string, options?: RequestInit) {
+  const { headers, ...otherOptions } = options ?? {};
+
+  return await fetch(urlJoin(store.apiRoot ?? DEFAULT_API_ROOT, endpoint), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...headers,
+    },
+    ...otherOptions,
+  });
+}
+
 async function sendStart() {
-  // await store.ingestionApi.start.post({
-  //   projectToken: store.projectToken,
-  //   userId: store.userId,
-  // });
+  await ingestionApi("start", {
+    body: JSON.stringify({
+      projectToken: store.projectToken,
+      userId: store.userId,
+    }),
+  });
 }
 
 async function sendEnd() {
-  // store.ingestionApi.end.post({
-  //   projectToken: store.projectToken,
-  //   userId: store.userId,
-  // });
+  await ingestionApi("end", {
+    body: JSON.stringify({
+      projectToken: store.projectToken,
+      userId: store.userId,
+    }),
+  });
 }
 
 export const pocketbee = {
@@ -54,15 +69,10 @@ export const pocketbee = {
       );
     }
 
-    // const ingestionApi = edenTreaty<IngestionApi>(
-    //   options.apiRoot ?? DEFAULT_API_ROOT,
-    // );
-
     store = {
       ...options,
       debugLogs: options.debugLogs ?? __DEV__ ? true : false,
       userId,
-      // ingestionApi,
     };
 
     if (store.debugLogs) {
