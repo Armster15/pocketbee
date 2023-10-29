@@ -1,14 +1,13 @@
 import { Fragment } from "react";
 import { useRouter } from "next/router";
 import { Menu, Transition } from "@headlessui/react";
-import { useUser } from "@supabase/auth-helpers-react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { IoChevronDown } from "react-icons/io5";
 import clsx from "clsx";
 
 export const UserDropdown = () => {
   const user = useUser();
-  const supabase = createClientComponentClient();
+  const supabase = useSupabaseClient();
   const router = useRouter();
 
   if (!user) return null;

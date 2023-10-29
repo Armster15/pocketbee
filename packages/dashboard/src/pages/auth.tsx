@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function AuthPage() {
   const [authRedirectUrl, setAuthRedirectUrl] = useState<string | undefined>(
     undefined,
   );
-  const supabase = createClientComponentClient();
+  const supabase = useSupabaseClient();
 
   useEffect(() => {
     setAuthRedirectUrl(

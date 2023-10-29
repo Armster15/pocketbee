@@ -7,12 +7,13 @@ import { RootLayout } from "$/components/RootLayout";
 import { ProjectLayout } from "$/components/ProjectLayout";
 import { api } from "$/utils/api";
 import Skeleton from "react-loading-skeleton";
-import { supabase } from "$/utils/supabase";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 const PING_CLASSNAME = "animate-[ping_1s_cubic-bezier(0,0,0.2,1)]";
 
 const ProjectPage: NextPageWithLayout = () => {
   const router = useRouter();
+  const supabase = useSupabaseClient();
   const projectId = router.query.projectId as string | undefined;
   const pingRef = useRef<HTMLDivElement | null>(null);
 
