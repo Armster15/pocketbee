@@ -5,7 +5,7 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-const PORT = 5050;
+const PORT = process.env.PORT ?? 5050;
 const wss = new WebSocketServer({ port: 5050 });
 
 if (!process.env.DATABASE_URL) {
