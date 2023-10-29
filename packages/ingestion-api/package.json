@@ -1,0 +1,20 @@
+{
+  "name": "@pocketbee/ingestion-api",
+  "main": "index.ts",
+  "scripts": {
+    "start": "node --loader esbuild-register/loader -r esbuild-register ./index.ts"
+  },
+  "dependencies": {
+    "@pocketbee/db": "workspace:*",
+    "dotenv": "^16.3.1",
+    "esbuild": "^0.19.5",
+    "esbuild-register": "^3.5.0",
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.8"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
