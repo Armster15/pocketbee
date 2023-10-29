@@ -4,7 +4,9 @@ import { TRPCError } from "@trpc/server";
 
 export const ingestionRouter = createTRPCRouter({
   start: publicProcedure
+    .meta({ openapi: { method: "POST", path: "/start" } })
     .input(z.object({ projectToken: z.string(), userId: z.string() }))
+    .output(z.boolean())
     .mutation(async ({ input: { projectToken, userId }, ctx: { prisma } }) => {
       await prisma.projects.update({
         where: {
@@ -21,10 +23,14 @@ export const ingestionRouter = createTRPCRouter({
           },
         },
       });
+
+      return true;
     }),
 
   end: publicProcedure
+    .meta({ openapi: { method: "POST", path: "/end" } })
     .input(z.object({ projectToken: z.string(), userId: z.string() }))
+    .output(z.boolean())
     .mutation(async ({ input: { projectToken, userId }, ctx: { prisma } }) => {
       const activeUsersQuery = await prisma.projects.findUnique({
         where: {
@@ -35,7 +41,7 @@ export const ingestionRouter = createTRPCRouter({
         },
       });
 
-      if (!activeUsersQuery) return;
+      if (!activeUsersQuery) return false;
       const { active_users: activeUsers } = activeUsersQuery;
 
       await prisma.projects.update({
@@ -48,5 +54,7 @@ export const ingestionRouter = createTRPCRouter({
           },
         },
       });
+
+      return true;
     }),
 });
