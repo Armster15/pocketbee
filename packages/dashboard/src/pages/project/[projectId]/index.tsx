@@ -3,18 +3,11 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import clsx from "clsx";
 import { NextPageWithLayout } from "$/pages/_app";
-import { edenTreaty } from "@elysiajs/eden";
 import { RootLayout } from "$/components/RootLayout";
 import { ProjectLayout } from "$/components/ProjectLayout";
 import { api } from "$/utils/api";
-import { env } from "$/env.mjs";
-import type { App as IngestionApi } from "@pocketbee/ingestion-api";
-import { useSession } from "@supabase/auth-helpers-react";
 import Skeleton from "react-loading-skeleton";
-
-const ingestionApi = edenTreaty<IngestionApi>(
-  env.NEXT_PUBLIC_INGESTION_API_URL,
-);
+import { supabase } from "$/utils/supabase";
 
 const PING_CLASSNAME = "animate-[ping_1s_cubic-bezier(0,0,0.2,1)]";
 
@@ -33,38 +26,30 @@ const ProjectPage: NextPageWithLayout = () => {
     { enabled: !!projectId },
   );
 
-  const session = useSession();
-
   useEffect(() => {
-    if (!projectId || !session) return;
+    if (!projectId) return;
 
-    const ws = ingestionApi.ws.subscribe({
-      $query: { projectId },
-    });
-
-    ws.on("message", ({ data: message }) => {
-      console.info("WS >> ", message);
-
-      if (message.event === "update") {
-        refetchProject();
-        pingRef.current?.classList.remove(PING_CLASSNAME);
-        setTimeout(() => {
-          pingRef.current?.classList.add(PING_CLASSNAME);
-        }, 100);
-      } else if (message.event === "hello") {
-        ws.send({
-          event: "identify",
-          data: session.access_token,
-        });
-      } else if (message.event === "error") {
-        console.error("Error from WebSocket: ", message.data);
-      }
-    });
+    const channel = supabase
+      .channel("schema-db-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "Projects",
+          filter: `id=eq.${projectId}`,
+        },
+        (payload) => {
+          console.log("PROJECT UPDATED!", payload);
+          refetchProject();
+        },
+      )
+      .subscribe();
 
     return () => {
-      ws.close();
+      supabase.removeChannel(channel);
     };
-  }, [projectId, session]);
+  }, [projectId]);
 
   // if (!project) {
   //   if (isLoading) return <p>Loading...</p>;
