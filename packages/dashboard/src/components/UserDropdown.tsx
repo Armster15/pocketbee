@@ -13,7 +13,7 @@ export const UserDropdown = () => {
   if (!user) return null;
 
   return (
-    <Menu as="div" className="relative inline-block text-left">
+    <Menu as="div" className="relative z-10 inline-block text-left">
       <Menu.Button
         aria-label={`User dropdown button for ${user.user_metadata.name}`}
         className="flex items-center gap-2"

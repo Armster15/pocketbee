@@ -16,20 +16,21 @@ export const ProjectLayout = ({ children }: PropsWithChildren) => {
   );
 
   return (
-    <div className="flex">
-      <aside className="mr-12 w-56">
+    <div className="sm:flex">
+      <aside className="mb-6 sm:mb-0 sm:mr-12 sm:w-56">
         <h2 className="truncate text-2xl font-semibold">
           {project?.name ?? <Skeleton />}
         </h2>
 
-        <div className="mt-5 grid gap-1">
+        <div className="child:flex-1 mt-5 flex gap-1 sm:grid">
           <ActiveLink href={`/project/${projectId}`}>
             <IoStatsChart aria-hidden />
-            Analytics
+            <span className="sr-only sm:not-sr-only">Analytics</span>
           </ActiveLink>
+
           <ActiveLink href={`/project/${projectId}/settings`}>
             <IoSettings aria-hidden />
-            Settings
+            <span className="sr-only sm:not-sr-only">Settings</span>
           </ActiveLink>
         </div>
       </aside>
@@ -48,8 +49,9 @@ const ActiveLink = ({ href, ...props }: ComponentProps<typeof Link>) => {
   return (
     <Link
       className={clsx(
-        "flex items-center gap-2 rounded-lg px-3 py-2 text-gray-700 duration-100",
-        active ? "bg-gray-200/80" : "hover:bg-gray-100",
+        "flex min-h-[40px] items-center justify-center gap-2 rounded-lg px-3 py-2 text-gray-700 duration-100 sm:justify-start",
+        "active:scale-90 sm:active:scale-100",
+        active ? "bg-gray-200/80" : "hover:bg-gray-100/80",
       )}
       href={href}
       {...props}
