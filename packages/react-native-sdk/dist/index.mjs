@@ -1,6 +1,7 @@
 // src/index.ts
 import { AppState } from "react-native";
 import * as SecureStore from "expo-secure-store";
+import { URL } from "react-native-url-polyfill";
 var DEFAULT_API_ROOT = "wss://v0-1-ws-pocketbee.armaan.cc/";
 var SECURE_STORE_OPTIONS = {
   keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK,
@@ -24,7 +25,19 @@ async function sendStart() {
     !ws ||
     (ws && (ws.readyState === ws.CLOSING || ws.readyState === ws.CLOSED))
   ) {
-    ws = new WebSocket(url);
+    ws = new WebSocket(url.href);
+  }
+  if (store.debugLogs) {
+    console.info("Pocketbee WS URL", url.href);
+    ws.onerror = (ev) => {
+      console.error("Pocketbee WS Error", ev);
+    };
+    ws.onclose = (ev) => {
+      console.warn("Pocketbee WS Close", ev);
+    };
+    ws.onmessage = (ev) => {
+      console.info("Pocketbee WS Message", ev);
+    };
   }
 }
 async function sendEnd() {

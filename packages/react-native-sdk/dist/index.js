@@ -44,6 +44,7 @@ __export(src_exports, {
 module.exports = __toCommonJS(src_exports);
 var import_react_native = require("react-native");
 var SecureStore = __toESM(require("expo-secure-store"));
+var import_react_native_url_polyfill = require("react-native-url-polyfill");
 var DEFAULT_API_ROOT = "wss://v0-1-ws-pocketbee.armaan.cc/";
 var SECURE_STORE_OPTIONS = {
   keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK,
@@ -60,14 +61,28 @@ async function onAppStateChange(status) {
 }
 async function sendStart() {
   var _a;
-  const url = new URL((_a = store.apiRoot) != null ? _a : DEFAULT_API_ROOT);
+  const url = new import_react_native_url_polyfill.URL(
+    (_a = store.apiRoot) != null ? _a : DEFAULT_API_ROOT,
+  );
   url.searchParams.set("projectToken", store.projectToken);
   url.searchParams.set("userId", store.userId);
   if (
     !ws ||
     (ws && (ws.readyState === ws.CLOSING || ws.readyState === ws.CLOSED))
   ) {
-    ws = new WebSocket(url);
+    ws = new WebSocket(url.href);
+  }
+  if (store.debugLogs) {
+    console.info("Pocketbee WS URL", url.href);
+    ws.onerror = (ev) => {
+      console.error("Pocketbee WS Error", ev);
+    };
+    ws.onclose = (ev) => {
+      console.warn("Pocketbee WS Close", ev);
+    };
+    ws.onmessage = (ev) => {
+      console.info("Pocketbee WS Message", ev);
+    };
   }
 }
 async function sendEnd() {
