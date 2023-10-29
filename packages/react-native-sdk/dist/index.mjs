@@ -9,7 +9,7 @@ var SECURE_STORE_OPTIONS = {
 var store;
 var ws = void 0;
 async function onAppStateChange(status) {
-  console.log(status);
+  console.log(`\u{1F41D} Pocketbee App Status: ${status}`);
   if (status === "background") {
     await sendEnd();
   } else if (status === "active") {
@@ -32,7 +32,10 @@ async function sendStart() {
       console.error("\u{1F41D} Pocketbee WS Error", ev);
     };
     ws.onclose = (ev) => {
-      console.warn("\u{1F41D} Pocketbee WS Close", ev);
+      if (ev.code === 1e3) {
+        console.info("\u{1F41D} Pocketbee Regular WS Close (code: 1000)");
+      }
+      console.warn("\u{1F41D} Pocketbee Irregular WS Close", ev);
     };
     ws.onmessage = (ev) => {
       console.info("\u{1F41D} Pocketbee WS Message", ev);
@@ -40,7 +43,7 @@ async function sendStart() {
   }
 }
 async function sendEnd() {
-  ws == null ? void 0 : ws.close();
+  ws == null ? void 0 : ws.close(1e3);
 }
 var pocketbee = {
   init: async (options) => {

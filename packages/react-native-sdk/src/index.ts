@@ -12,7 +12,7 @@ let store: Store;
 let ws: WebSocket | undefined = undefined;
 
 async function onAppStateChange(status: AppStateStatus) {
-  console.log(status);
+  console.log(`🐝 Pocketbee App Status: ${status}`);
 
   if (status === "background") {
     await sendEnd();
@@ -39,7 +39,10 @@ async function sendStart() {
     };
 
     ws.onclose = (ev) => {
-      console.warn("🐝 Pocketbee WS Close", ev);
+      if (ev.code === 1000) {
+        console.info("🐝 Pocketbee Regular WS Close (code: 1000)");
+      }
+      console.warn("🐝 Pocketbee Irregular WS Close", ev);
     };
 
     ws.onmessage = (ev) => {
@@ -49,7 +52,7 @@ async function sendStart() {
 }
 
 async function sendEnd() {
-  ws?.close();
+  ws?.close(1000);
 }
 
 export const pocketbee = {
