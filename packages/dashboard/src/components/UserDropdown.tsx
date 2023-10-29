@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { useRouter } from "next/router";
 import { Menu, Transition } from "@headlessui/react";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { IoChevronDown } from "react-icons/io5";
+import { IoChevronDown, IoPerson } from "react-icons/io5";
 import clsx from "clsx";
 
 export const UserDropdown = () => {
@@ -18,11 +18,20 @@ export const UserDropdown = () => {
         aria-label={`User dropdown button for ${user.user_metadata.name}`}
         className="flex items-center gap-2"
       >
-        <img
-          className="h-8 w-8 rounded-full"
-          src={user.user_metadata.avatar_url}
-          alt=""
-        />
+        {user.user_metadata.avatar_url ? (
+          <img
+            className="h-8 w-8 rounded-full"
+            src={user.user_metadata.avatar_url}
+            alt=""
+          />
+        ) : (
+          <div
+            aria-hidden
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200"
+          >
+            <IoPerson className="text-lg text-gray-700" />
+          </div>
+        )}
         <IoChevronDown className="text-gray-600" />
       </Menu.Button>
 
