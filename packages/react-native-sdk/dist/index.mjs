@@ -1,12 +1,12 @@
 // src/index.ts
 import { AppState } from "react-native";
-import urlJoin from "url-join";
 import * as SecureStore from "expo-secure-store";
-var DEFAULT_API_ROOT = "https://pocketbee.armaan.cc/api/ingestion/v0.1/";
+var DEFAULT_API_ROOT = "wss://v0-1-ws-pocketbee.armaan.cc/";
 var SECURE_STORE_OPTIONS = {
   keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK,
 };
 var store;
+var ws = void 0;
 async function onAppStateChange(status) {
   console.log(status);
   if (status === "background") {
@@ -15,36 +15,20 @@ async function onAppStateChange(status) {
     await sendStart();
   }
 }
-async function ingestionApi(endpoint, options) {
-  var _a;
-  const { headers, ...otherOptions } = options != null ? options : {};
-  return await fetch(
-    urlJoin((_a = store.apiRoot) != null ? _a : DEFAULT_API_ROOT, endpoint),
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...headers,
-      },
-      ...otherOptions,
-    },
-  );
-}
 async function sendStart() {
-  await ingestionApi("start", {
-    body: JSON.stringify({
-      projectToken: store.projectToken,
-      userId: store.userId,
-    }),
-  });
+  var _a;
+  const url = new URL((_a = store.apiRoot) != null ? _a : DEFAULT_API_ROOT);
+  url.searchParams.set("projectToken", store.projectToken);
+  url.searchParams.set("userId", store.userId);
+  if (
+    !ws ||
+    (ws && (ws.readyState === ws.CLOSING || ws.readyState === ws.CLOSED))
+  ) {
+    ws = new WebSocket(url);
+  }
 }
 async function sendEnd() {
-  await ingestionApi("end", {
-    body: JSON.stringify({
-      projectToken: store.projectToken,
-      userId: store.userId,
-    }),
-  });
+  ws == null ? void 0 : ws.close();
 }
 var pocketbee = {
   init: async (options) => {
