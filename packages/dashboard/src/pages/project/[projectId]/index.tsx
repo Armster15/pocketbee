@@ -37,7 +37,7 @@ const ProjectPage: NextPageWithLayout = () => {
         {
           event: "*",
           schema: "public",
-          table: "Projects",
+          table: "projects",
           filter: `id=eq.${projectId}`,
         },
         (payload) => {
