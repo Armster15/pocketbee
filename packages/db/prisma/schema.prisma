@@ -23,13 +23,12 @@ model projects {
 
 model session_events {
     app_user_id   String
-    id            String    @default(uuid()) @db.Uuid
+    id            String    @id @default(uuid()) @db.Uuid
     start_time    DateTime  @default(now()) @db.Timestamptz(6)
     end_time      DateTime? @db.Timestamptz(6)
     project_token String    @db.Uuid
     projects      projects  @relation(fields: [project_token], references: [token], onDelete: Cascade, onUpdate: NoAction)
 
-    @@unique([id, start_time])
     @@index([start_time(sort: Desc)])
     @@schema("public")
 }

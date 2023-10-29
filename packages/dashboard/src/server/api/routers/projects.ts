@@ -17,11 +17,37 @@ export const projectsRouter = createTRPCRouter({
       if (!project) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Project with token not found",
+          message: "Project with id not found",
         });
       }
 
       return project;
+    }),
+
+  getActiveUsers: protectedProcedure
+    .input(z.object({ projectId: z.string() }))
+    .query(async ({ input: { projectId }, ctx: { user, prisma } }) => {
+      const { token: projectToken } =
+        (await prisma.projects.findUnique({
+          where: { id: projectId },
+          select: { token: true },
+        })) ?? {};
+
+      if (!projectToken) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Project with id not found",
+        });
+      }
+
+      const noOfActiveUsers = await prisma.session_events.count({
+        where: {
+          project_token: projectToken,
+          end_time: null,
+        },
+      });
+
+      return noOfActiveUsers;
     }),
 
   rename: protectedProcedure

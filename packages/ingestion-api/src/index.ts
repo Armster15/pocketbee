@@ -1,5 +1,8 @@
 import { WebSocketServer } from "ws";
-import { PrismaClient } from "@pocketbee/db";
+import {
+  PrismaClient,
+  type session_events as SessionEvent,
+} from "@pocketbee/db";
 import url from "node:url";
 import * as dotenv from "dotenv";
 import { wsReqSchema, type WSResSchema } from "./schema";
@@ -33,35 +36,29 @@ wss.on("connection", async function connection(ws, req) {
     return;
   }
 
+  let sessionEvent: SessionEvent | undefined = undefined;
+
   // on close
   ws.on("close", async (code) => {
     if (code !== 1011 && code !== 1007) {
-      try {
-        const activeUsersQuery = await prisma.projects.findUnique({
-          where: {
-            token: projectToken,
-          },
-          select: {
-            active_users: true,
-          },
-        });
-
-        if (!activeUsersQuery) return;
-        const { active_users: activeUsers } = activeUsersQuery;
-
-        await prisma.projects.update({
-          where: {
-            token: projectToken,
-          },
-          data: {
-            active_users: {
-              set: activeUsers.filter((uid) => uid !== userId),
+      if (sessionEvent) {
+        try {
+          await prisma.session_events.update({
+            where: {
+              id: sessionEvent.id,
+              app_user_id: sessionEvent.app_user_id,
+              project_token: projectToken,
             },
-          },
-        });
-      } catch (err) {
-        console.error(err);
-        ws.close(1011, "An error occurred");
+            data: {
+              end_time: new Date(),
+            },
+          });
+        } catch (err) {
+          console.error(err);
+          ws.close(1011, "An error occurred");
+        }
+      } else {
+        console.warn(`No session event id for user id of ${userId}`);
       }
     }
   });
@@ -95,19 +92,10 @@ wss.on("connection", async function connection(ws, req) {
 
   // on open
   try {
-    await prisma.projects.update({
-      where: {
-        token: projectToken,
-        NOT: {
-          active_users: {
-            has: userId,
-          },
-        },
-      },
+    sessionEvent = await prisma.session_events.create({
       data: {
-        active_users: {
-          push: userId,
-        },
+        app_user_id: userId,
+        project_token: projectToken,
       },
     });
   } catch (err) {

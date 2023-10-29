@@ -17,18 +17,23 @@ const ProjectPage: NextPageWithLayout = () => {
   const projectId = router.query.projectId as string | undefined;
   const pingRef = useRef<HTMLDivElement | null>(null);
 
-  const {
-    data: project,
-    isLoading,
-    isError,
-  } = api.projects.get.useQuery(
+  const { data: project } = api.projects.get.useQuery(
     { projectId: projectId! },
     { enabled: !!projectId },
   );
-  const trpcUtils = api.useUtils();
+
+  const {
+    data: activeUsers,
+    isLoading: isActiveUsersLoading,
+    isError: isActiveUsersError,
+    refetch: refetchActiveUsers,
+  } = api.projects.getActiveUsers.useQuery(
+    { projectId: projectId! },
+    { enabled: !!projectId },
+  );
 
   useEffect(() => {
-    if (!projectId) return;
+    if (!project) return;
 
     const channel = supabase
       .channel("schema-db-changes")
@@ -37,18 +42,13 @@ const ProjectPage: NextPageWithLayout = () => {
         {
           event: "*",
           schema: "public",
-          table: "projects",
-          filter: `id=eq.${projectId}`,
+          table: "session_events",
+          filter: `project_token=eq.${project.token}`,
         },
-        (payload) => {
+        async (payload) => {
           console.log("PROJECT UPDATED!", payload);
 
-          trpcUtils.projects.get.setData({ projectId }, (data: any) => {
-            return {
-              ...(data ?? {}),
-              ...(payload.new ?? {}),
-            };
-          });
+          await refetchActiveUsers();
 
           pingRef.current?.classList.remove(PING_CLASSNAME);
           setTimeout(() => {
@@ -61,7 +61,7 @@ const ProjectPage: NextPageWithLayout = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [projectId]);
+  }, [project]);
 
   // if (!project) {
   //   if (isLoading) return <p>Loading...</p>;
@@ -78,8 +78,10 @@ const ProjectPage: NextPageWithLayout = () => {
 
       <div className="flex h-48 w-48 flex-col justify-between rounded-2xl border-2 p-4">
         {(() => {
-          if (isLoading && !project) return <Skeleton count={6} />;
-          if (isError) return <p className="text-red-500">An error occurred</p>;
+          if (isActiveUsersLoading && !activeUsers)
+            return <Skeleton count={6} />;
+          if (isActiveUsersError)
+            return <p className="text-red-500">An error occurred</p>;
 
           return (
             <>
@@ -95,7 +97,7 @@ const ProjectPage: NextPageWithLayout = () => {
               </div>
 
               <div>
-                <p className="my-1 text-7xl">{project.active_users.length}</p>
+                <p className="my-1 text-7xl">{activeUsers}</p>
                 <p className="text-gray-500">
                   <span className="sr-only">users </span>online now
                 </p>
