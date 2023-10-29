@@ -2,7 +2,7 @@
 import { AppState } from "react-native";
 import urlJoin from "url-join";
 import * as SecureStore from "expo-secure-store";
-var DEFAULT_API_ROOT = "http://localhost:3000/api/ingestion/";
+var DEFAULT_API_ROOT = "https://pocketbee.armaan.cc/api/ingestion/v0.1/";
 var SECURE_STORE_OPTIONS = {
   keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK,
 };

@@ -45,7 +45,7 @@ module.exports = __toCommonJS(src_exports);
 var import_react_native = require("react-native");
 var import_url_join = __toESM(require("url-join"));
 var SecureStore = __toESM(require("expo-secure-store"));
-var DEFAULT_API_ROOT = "http://localhost:3000/api/ingestion/";
+var DEFAULT_API_ROOT = "https://pocketbee.armaan.cc/api/ingestion/v0.1/";
 var SECURE_STORE_OPTIONS = {
   keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK,
 };
