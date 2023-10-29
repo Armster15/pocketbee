@@ -28,15 +28,14 @@ async function sendStart() {
     ws = new WebSocket(url.href);
   }
   if (store.debugLogs) {
-    console.info("Pocketbee WS URL", url.href);
     ws.onerror = (ev) => {
-      console.error("Pocketbee WS Error", ev);
+      console.error("\u{1F41D} Pocketbee WS Error", ev);
     };
     ws.onclose = (ev) => {
-      console.warn("Pocketbee WS Close", ev);
+      console.warn("\u{1F41D} Pocketbee WS Close", ev);
     };
     ws.onmessage = (ev) => {
-      console.info("Pocketbee WS Message", ev);
+      console.info("\u{1F41D} Pocketbee WS Message", ev);
     };
   }
 }

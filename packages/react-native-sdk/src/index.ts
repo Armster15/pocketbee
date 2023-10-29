@@ -34,18 +34,16 @@ async function sendStart() {
   }
 
   if (store.debugLogs) {
-    console.info("Pocketbee WS URL", url.href);
-
     ws.onerror = (ev) => {
-      console.error("Pocketbee WS Error", ev);
+      console.error("🐝 Pocketbee WS Error", ev);
     };
 
     ws.onclose = (ev) => {
-      console.warn("Pocketbee WS Close", ev);
+      console.warn("🐝 Pocketbee WS Close", ev);
     };
 
     ws.onmessage = (ev) => {
-      console.info("Pocketbee WS Message", ev);
+      console.info("🐝 Pocketbee WS Message", ev);
     };
   }
 }
