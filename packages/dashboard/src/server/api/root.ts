@@ -1,5 +1,6 @@
-import { projectsRouter } from "$/server/api/routers/projects";
 import { createTRPCRouter } from "$/server/api/trpc";
+import { projectsRouter } from "$/server/api/routers/projects";
+import { ingestionRouter } from "$/server/api/routers/ingestion";
 
 /**
  * This is the primary router for your server.
@@ -8,6 +9,7 @@ import { createTRPCRouter } from "$/server/api/trpc";
  */
 export const appRouter = createTRPCRouter({
   projects: projectsRouter,
+  ingestion: ingestionRouter,
 });
 
 // export type definition of API

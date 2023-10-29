@@ -1,6 +1,3 @@
-import type { EdenTreaty } from "@elysiajs/eden/src/treaty/types";
-import type { App as IngestionApi } from "@pocketbee/ingestion-api";
-
 export interface Options {
   projectToken: string;
   /** API root of ingestion API */
@@ -11,5 +8,5 @@ export interface Options {
 
 export interface Store extends Options {
   userId: string;
-  ingestionApi: EdenTreaty.Create<IngestionApi>;
+  // ingestionApi: EdenTreaty.Create<IngestionApi>;
 }

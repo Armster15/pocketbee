@@ -1,7 +1,8 @@
+// TODO: Reimplement start/end mutations w/ TRPC
+
 import { AppState, type AppStateStatus } from "react-native";
 import { edenTreaty } from "@elysiajs/eden";
 import * as SecureStore from "expo-secure-store";
-import type { App as IngestionApi } from "@pocketbee/ingestion-api";
 import type { Options, Store } from "./types";
 
 const DEFAULT_API_ROOT = "http://localhost:5050";
@@ -22,17 +23,17 @@ async function onAppStateChange(status: AppStateStatus) {
 }
 
 async function sendStart() {
-  await store.ingestionApi.start.post({
-    projectToken: store.projectToken,
-    userId: store.userId,
-  });
+  // await store.ingestionApi.start.post({
+  //   projectToken: store.projectToken,
+  //   userId: store.userId,
+  // });
 }
 
 async function sendEnd() {
-  store.ingestionApi.end.post({
-    projectToken: store.projectToken,
-    userId: store.userId,
-  });
+  // store.ingestionApi.end.post({
+  //   projectToken: store.projectToken,
+  //   userId: store.userId,
+  // });
 }
 
 export const pocketbee = {
@@ -53,15 +54,15 @@ export const pocketbee = {
       );
     }
 
-    const ingestionApi = edenTreaty<IngestionApi>(
-      options.apiRoot ?? DEFAULT_API_ROOT,
-    );
+    // const ingestionApi = edenTreaty<IngestionApi>(
+    //   options.apiRoot ?? DEFAULT_API_ROOT,
+    // );
 
     store = {
       ...options,
       debugLogs: options.debugLogs ?? __DEV__ ? true : false,
       userId,
-      ingestionApi,
+      // ingestionApi,
     };
 
     if (store.debugLogs) {
