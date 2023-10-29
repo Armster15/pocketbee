@@ -40,8 +40,9 @@ async function sendStart() {
     if (store.debugLogs) {
       if (ev.code === 1e3) {
         console.info("\u{1F41D} Pocketbee Regular WS Close (code: 1000)");
+      } else {
+        console.warn("\u{1F41D} Pocketbee Irregular WS Close", ev);
       }
-      console.warn("\u{1F41D} Pocketbee Irregular WS Close", ev);
     }
     if (wsPingIntervalId) {
       clearInterval(wsPingIntervalId);

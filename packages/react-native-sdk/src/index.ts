@@ -48,8 +48,9 @@ async function sendStart() {
     if (store.debugLogs) {
       if (ev.code === 1000) {
         console.info("🐝 Pocketbee Regular WS Close (code: 1000)");
+      } else {
+        console.warn("🐝 Pocketbee Irregular WS Close", ev);
       }
-      console.warn("🐝 Pocketbee Irregular WS Close", ev);
     }
 
     if (wsPingIntervalId) {
