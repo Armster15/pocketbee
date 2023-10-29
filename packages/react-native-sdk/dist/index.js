@@ -76,26 +76,30 @@ async function sendStart() {
       ws == null ? void 0 : ws.send(JSON.stringify({ event: "ping" }));
     }, 1e3 * 60);
   }
-  if (store.debugLogs) {
-    ws.onerror = (ev) => {
+  ws.onerror = (ev) => {
+    if (store.debugLogs) {
       console.error("\u{1F41D} Pocketbee WS Error", ev);
-    };
-    ws.onclose = (ev) => {
+    }
+  };
+  ws.onclose = (ev) => {
+    if (store.debugLogs) {
       if (ev.code === 1e3) {
         console.info("\u{1F41D} Pocketbee Regular WS Close (code: 1000)");
       }
       console.warn("\u{1F41D} Pocketbee Irregular WS Close", ev);
-    };
-    ws.onmessage = (ev) => {
+    }
+    if (wsPingIntervalId) {
+      clearInterval(wsPingIntervalId);
+    }
+  };
+  ws.onmessage = (ev) => {
+    if (store.debugLogs) {
       console.info("\u{1F41D} Pocketbee WS Message", ev);
-    };
-  }
+    }
+  };
 }
 async function sendEnd() {
   ws == null ? void 0 : ws.close(1e3);
-  if (wsPingIntervalId) {
-    clearInterval(wsPingIntervalId);
-  }
 }
 var pocketbee = {
   init: async (options) => {

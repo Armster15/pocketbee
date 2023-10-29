@@ -38,29 +38,34 @@ async function sendStart() {
     }, 1000 * 60);
   }
 
-  if (store.debugLogs) {
-    ws.onerror = (ev) => {
+  ws.onerror = (ev) => {
+    if (store.debugLogs) {
       console.error("🐝 Pocketbee WS Error", ev);
-    };
+    }
+  };
 
-    ws.onclose = (ev) => {
+  ws.onclose = (ev) => {
+    if (store.debugLogs) {
       if (ev.code === 1000) {
         console.info("🐝 Pocketbee Regular WS Close (code: 1000)");
       }
       console.warn("🐝 Pocketbee Irregular WS Close", ev);
-    };
+    }
 
-    ws.onmessage = (ev) => {
+    if (wsPingIntervalId) {
+      clearInterval(wsPingIntervalId);
+    }
+  };
+
+  ws.onmessage = (ev) => {
+    if (store.debugLogs) {
       console.info("🐝 Pocketbee WS Message", ev);
-    };
-  }
+    }
+  };
 }
 
 async function sendEnd() {
   ws?.close(1000);
-  if (wsPingIntervalId) {
-    clearInterval(wsPingIntervalId);
-  }
 }
 
 export const pocketbee = {
