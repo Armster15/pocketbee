@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 
 export const ingestionRouter = createTRPCRouter({
   start: publicProcedure
-    .meta({ openapi: { method: "POST", path: "/start" } })
+    .meta({ openapi: { method: "POST", path: "/v0.1/start" } })
     .input(z.object({ projectToken: z.string(), userId: z.string() }))
     .output(z.boolean())
     .mutation(async ({ input: { projectToken, userId }, ctx: { prisma } }) => {
@@ -28,7 +28,7 @@ export const ingestionRouter = createTRPCRouter({
     }),
 
   end: publicProcedure
-    .meta({ openapi: { method: "POST", path: "/end" } })
+    .meta({ openapi: { method: "POST", path: "/v0.1/end" } })
     .input(z.object({ projectToken: z.string(), userId: z.string() }))
     .output(z.boolean())
     .mutation(async ({ input: { projectToken, userId }, ctx: { prisma } }) => {

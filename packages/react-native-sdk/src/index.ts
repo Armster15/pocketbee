@@ -3,7 +3,7 @@ import urlJoin from "url-join";
 import * as SecureStore from "expo-secure-store";
 import type { Options, Store } from "./types";
 
-const DEFAULT_API_ROOT = "http://localhost:3000/api/ingestion/";
+const DEFAULT_API_ROOT = "https://pocketbee.armaan.cc/api/ingestion/v0.1/";
 const SECURE_STORE_OPTIONS: SecureStore.SecureStoreOptions = {
   keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK,
 };
