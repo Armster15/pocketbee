@@ -19,13 +19,13 @@ const ProjectPage: NextPageWithLayout = () => {
 
   const {
     data: project,
-    refetch: refetchProject,
     isLoading,
     isError,
   } = api.projects.get.useQuery(
     { projectId: projectId! },
     { enabled: !!projectId },
   );
+  const trpcUtils = api.useUtils();
 
   useEffect(() => {
     if (!projectId) return;
@@ -42,7 +42,13 @@ const ProjectPage: NextPageWithLayout = () => {
         },
         (payload) => {
           console.log("PROJECT UPDATED!", payload);
-          refetchProject();
+
+          trpcUtils.projects.get.setData({ projectId }, (data: any) => {
+            return {
+              ...(data ?? {}),
+              ...(payload.new ?? {}),
+            };
+          });
         },
       )
       .subscribe();
