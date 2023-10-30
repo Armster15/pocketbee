@@ -24,9 +24,9 @@ const ProjectPage: NextPageWithLayout = () => {
         </title>
       </Head>
 
-      <div className="flex gap-6">
+      <div className="child:h-52 sm:child:h-56 grid-cols-3 space-y-6 sm:grid sm:gap-6 sm:space-y-0">
         <ActiveUsersWidget projectId={projectId} />
-        {/* <SessionsWidget projectId={projectId} /> */}
+        <SessionsWidget className="col-span-2" projectId={projectId} />
       </div>
     </>
   );

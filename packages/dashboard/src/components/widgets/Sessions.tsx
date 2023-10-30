@@ -1,22 +1,36 @@
+import clsx from "clsx";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { IoPerson } from "react-icons/io5";
 import { api } from "$/lib/api";
 import Skeleton from "react-loading-skeleton";
+import type { DivProps } from "react-html-props";
 
 type Data = { date: Date; sessions: number };
 
-export interface SessionsWidgetProps {
+export interface SessionsWidgetProps extends DivProps {
   projectId: string | undefined;
 }
 
-export const SessionsWidget = ({ projectId }: SessionsWidgetProps) => {
+export const SessionsWidget = ({
+  projectId,
+  className,
+  ...props
+}: SessionsWidgetProps) => {
   const { data: project } = api.projects.get.useQuery(
     { projectId: projectId! },
     { enabled: !!projectId },
   );
 
   return (
-    <div className="flex h-64 w-fit max-w-md flex-1 flex-col justify-end rounded-2xl border-2 p-4">
+    <div
+      className={clsx(
+        "flex flex-col justify-between rounded-2xl border-2 p-4 pb-0",
+        className,
+      )}
+      {...props}
+    >
+      <h3 className="px-2 pt-1 text-xl font-semibold">Sessions</h3>
+
       {project && (
         <ResponsiveContainer width={"100%"} height={"80%"}>
           <BarChart data={data}>

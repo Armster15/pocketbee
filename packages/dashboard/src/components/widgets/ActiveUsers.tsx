@@ -3,14 +3,19 @@ import clsx from "clsx";
 import { api } from "$/lib/api";
 import Skeleton from "react-loading-skeleton";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import type { DivProps } from "react-html-props";
 
 const PING_CLASSNAME = "animate-[ping_1s_cubic-bezier(0,0,0.2,1)]";
 
-export interface ActiveUsersProps {
+export interface ActiveUsersProps extends DivProps {
   projectId: string | undefined;
 }
 
-export const ActiveUsersWidget = ({ projectId }: ActiveUsersProps) => {
+export const ActiveUsersWidget = ({
+  projectId,
+  className,
+  ...props
+}: ActiveUsersProps) => {
   const supabase = useSupabaseClient();
   const pingRef = useRef<HTMLDivElement | null>(null);
 
@@ -61,7 +66,13 @@ export const ActiveUsersWidget = ({ projectId }: ActiveUsersProps) => {
   }, [project]);
 
   return (
-    <div className="flex h-48 w-48 flex-col justify-between rounded-2xl border-2 p-4">
+    <div
+      className={clsx(
+        "flex flex-col justify-between rounded-2xl border-2 p-4",
+        className,
+      )}
+      {...props}
+    >
       {(() => {
         if (isLoading && !activeUsers) return <Skeleton count={6} />;
         if (isError) return <p className="text-red-500">An error occurred</p>;
