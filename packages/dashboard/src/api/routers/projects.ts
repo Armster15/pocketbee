@@ -51,6 +51,23 @@ export const projectsRouter = createTRPCRouter({
 
       return res._count.session_events;
     }),
+
+  getSessions: protectedProcedure
+    .input(z.object({ projectId: z.string() }))
+    .query(async ({ input: { projectId }, ctx: { user, prisma } }) => {
+      type Res = { event_date: Date; event_count: BigInt }[];
+
+      const res = await prisma.$queryRaw<Res>`
+        SELECT DATE(e.start_time) AS event_date, COUNT(*) AS event_count
+        FROM public.session_events AS e
+        INNER JOIN public.projects AS p ON e.project_token = p.token
+        WHERE p.id = uuid(${projectId}) AND p.user_id = uuid(${user.id})
+        GROUP BY DATE(e.start_time) -- The DATE(...) makes it so we group it by individual days
+      `;
+
+      return res;
+    }),
+
   rename: protectedProcedure
     .input(z.object({ projectId: z.string(), name: z.string().min(1) }))
     .mutation(async ({ input: { projectId, name }, ctx: { user, prisma } }) => {
