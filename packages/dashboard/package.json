@@ -8,6 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui-float/react": "^0.12.0",
     "@headlessui/react": "^1.7.17",
     "@headlessui/tailwindcss": "^0.2.0",
     "@pocketbee/db": "workspace:*",
@@ -22,9 +23,11 @@
     "@trpc/react-query": "^10.37.1",
     "@trpc/server": "^10.37.1",
     "clsx": "^2.0.0",
+    "date-fns": "^2.30.0",
     "next": "^13.5.4",
     "nice-try": "^3.0.1",
     "react": "18.2.0",
+    "react-day-picker": "^8.9.1",
     "react-dom": "18.2.0",
     "react-icons": "^4.11.0",
     "react-loading-skeleton": "^3.3.1",

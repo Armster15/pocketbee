@@ -3,6 +3,7 @@ import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { IoPerson } from "react-icons/io5";
 import { api } from "$/lib/api";
 import Skeleton from "react-loading-skeleton";
+import { DayPicker } from "$/components/DayPicker";
 import type { DivProps } from "react-html-props";
 
 type Data = { date: Date; sessions: number };
@@ -34,7 +35,10 @@ export const SessionsWidget = ({
 
         return (
           <>
-            <h3 className="px-2 pt-1 text-xl font-semibold">Sessions</h3>
+            <div className="flex justify-between">
+              <h3 className="px-2 pt-1 text-xl font-semibold">Sessions</h3>
+              <DayPicker />
+            </div>
 
             <ResponsiveContainer width={"100%"} height={"80%"}>
               <BarChart data={data}>
