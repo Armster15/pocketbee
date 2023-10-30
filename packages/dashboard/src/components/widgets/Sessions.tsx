@@ -16,10 +16,9 @@ export const SessionsWidget = ({
   className,
   ...props
 }: SessionsWidgetProps) => {
-  const { data: project } = api.projects.get.useQuery(
-    { projectId: projectId! },
-    { enabled: !!projectId },
-  );
+  const { data, isLoading, isError } = api.projects.getSessions.useQuery<
+    Data[]
+  >({ projectId: projectId! }, { enabled: !!projectId });
 
   return (
     <div
@@ -29,87 +28,57 @@ export const SessionsWidget = ({
       )}
       {...props}
     >
-      {project ? (
-        <>
-          <h3 className="px-2 pt-1 text-xl font-semibold">Sessions</h3>
+      {(() => {
+        if (isLoading && !data) return <Skeleton count={8} />;
+        if (isError) return <p className="text-red-500">An error occurred</p>;
 
-          <ResponsiveContainer width={"100%"} height={"80%"}>
-            <BarChart data={data}>
-              <Bar dataKey="sessions" fill="#8884d8" />
-              <XAxis
-                dataKey="date"
-                tickFormatter={(date: Date) => {
-                  const month = date.toLocaleString("default", {
-                    month: "short",
-                  });
-                  const day = date.getUTCDate();
-                  return month + " " + day;
-                }}
-                stroke="#8884d8"
-              />
+        return (
+          <>
+            <h3 className="px-2 pt-1 text-xl font-semibold">Sessions</h3>
 
-              <Tooltip
-                content={({ payload }) => {
-                  if (payload && payload[0] && payload[0].payload) {
-                    const data = payload[0].payload as Data;
+            <ResponsiveContainer width={"100%"} height={"80%"}>
+              <BarChart data={data}>
+                <Bar dataKey="sessions" fill="#8884d8" />
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={(date: Date) => {
+                    const month = date.toLocaleString("default", {
+                      month: "short",
+                    });
+                    const day = date.getUTCDate();
+                    return month + " " + day;
+                  }}
+                  stroke="#8884d8"
+                />
 
-                    return (
-                      <div className="rounded border bg-white p-3 text-center shadow-md">
-                        <p className="flex items-center justify-center gap-2 text-gray-800">
-                          <IoPerson aria-hidden />
-                          {data.sessions.toLocaleString()}
-                          <span className="sr-only"> sessions</span>
-                        </p>
+                <Tooltip
+                  content={({ payload }) => {
+                    if (payload && payload[0] && payload[0].payload) {
+                      const data = payload[0].payload as Data;
 
-                        <p className="mt-1 text-sm text-gray-600">
-                          {data.date.toLocaleDateString()}
-                        </p>
-                      </div>
-                    );
-                  }
-                }}
-                cursor={false}
-                isAnimationActive={false}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </>
-      ) : (
-        <>
-          <Skeleton count={8} />
-        </>
-      )}
+                      return (
+                        <div className="rounded border bg-white p-3 text-center shadow-md">
+                          <p className="flex items-center justify-center gap-2 text-gray-800">
+                            <IoPerson aria-hidden />
+                            {data.sessions.toLocaleString()}
+                            <span className="sr-only"> sessions</span>
+                          </p>
+
+                          <p className="mt-1 text-sm text-gray-600">
+                            {data.date.toLocaleDateString()}
+                          </p>
+                        </div>
+                      );
+                    }
+                  }}
+                  cursor={false}
+                  isAnimationActive={false}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </>
+        );
+      })()}
     </div>
   );
 };
-
-const data: Data[] = [
-  {
-    date: new Date("2023-10-25"),
-    sessions: 7019,
-  },
-  {
-    date: new Date("2023-10-26"),
-    sessions: 7334,
-  },
-  {
-    date: new Date("2023-10-27"),
-    sessions: 7068,
-  },
-  {
-    date: new Date("2023-10-28"),
-    sessions: 7749,
-  },
-  {
-    date: new Date("2023-10-29"),
-    sessions: 6816,
-  },
-  {
-    date: new Date("2023-10-30"),
-    sessions: 3089,
-  },
-  {
-    date: new Date("2023-10-31"),
-    sessions: 3858,
-  },
-];
