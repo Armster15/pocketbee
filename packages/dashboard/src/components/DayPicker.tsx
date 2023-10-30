@@ -36,51 +36,58 @@ export const DayPicker = ({
   return (
     <div className="flex">
       <Popover>
-        <Float
-          portal
-          placement="bottom-end"
-          enter="transition ease-out duration-200"
-          enterFrom="opacity-0 translate-y-1"
-          enterTo="opacity-100 translate-y-0"
-          leave="transition ease-in duration-150"
-          leaveFrom="opacity-100 translate-y-0"
-          leaveTo="opacity-0 translate-y-1"
-        >
-          <Popover.Button
-            as={Button}
-            className={"h-full rounded-r-none border-r-0"}
-            aria-label="Choose custom date range"
+        {({ open }) => (
+          <Float
+            portal
+            autoPlacement
+            autoUpdate={{
+              layoutShift: !open,
+            }}
+            enter="transition ease-out duration-200"
+            enterFrom="opacity-0 translate-y-1"
+            enterTo="opacity-100 translate-y-0"
+            leave="transition ease-in duration-150"
+            leaveFrom="opacity-100 translate-y-0"
+            leaveTo="opacity-0 translate-y-1"
           >
-            <IoCalendarClear aria-hidden />
-          </Popover.Button>
+            <Popover.Button
+              as={Button}
+              className={"h-full rounded-r-none border-r-0"}
+              aria-label="Choose custom date range"
+            >
+              <IoCalendarClear aria-hidden />
+            </Popover.Button>
 
-          <Popover.Panel className="mt-1 rounded-2xl border-2 bg-white shadow-lg">
-            <ReactDayPicker
-              mode="range"
-              initialFocus
-              showOutsideDays={showOutsideDays}
-              className={clsx("p-3", className)}
-              components={{
-                IconLeft: ({ ...props }) => (
-                  <IoChevronBack className="h-4 w-4" />
-                ),
-                IconRight: ({ ...props }) => (
-                  <IoChevronForward className="h-4 w-4" />
-                ),
-              }}
-              selected={typeof selected === "string" ? undefined : selected}
-              // @ts-expect-error
-              onSelect={setSelected}
-              {...props}
-            />
-          </Popover.Panel>
-        </Float>
+            <Popover.Panel className="mt-1 rounded-2xl border-2 bg-white shadow-lg">
+              <ReactDayPicker
+                mode="range"
+                initialFocus
+                showOutsideDays={showOutsideDays}
+                className={clsx("p-3", className)}
+                components={{
+                  IconLeft: ({ ...props }) => (
+                    <IoChevronBack className="h-4 w-4" />
+                  ),
+                  IconRight: ({ ...props }) => (
+                    <IoChevronForward className="h-4 w-4" />
+                  ),
+                }}
+                selected={typeof selected === "string" ? undefined : selected}
+                // @ts-expect-error
+                onSelect={setSelected}
+                {...props}
+              />
+            </Popover.Panel>
+          </Float>
+        )}
       </Popover>
 
       <Listbox as="div" value={selected} onChange={setSelected}>
         <Float
           portal
-          placement="bottom-end"
+          autoPlacement={{
+            allowedPlacements: ["bottom-end", "top-end"],
+          }}
           enter="transition ease-out duration-200"
           enterFrom="opacity-0 translate-y-1"
           enterTo="opacity-100 translate-y-0"
