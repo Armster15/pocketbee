@@ -13,13 +13,15 @@ import { Float } from "@headlessui-float/react";
 
 export type DayPickerProps = React.ComponentProps<typeof ReactDayPicker>;
 
-const options = [
+const OPTIONS = [
   "Last hour",
   "Last 24 Hours",
   "Last 7 days",
   "Last 30 days",
   "Last 6 months",
-];
+] as const;
+type Options = (typeof OPTIONS)[number];
+const DEFAULT_OPTION = OPTIONS[2];
 
 export const DayPicker = ({
   className,
@@ -27,15 +29,16 @@ export const DayPicker = ({
   showOutsideDays = true,
   ...props
 }: DayPickerProps) => {
-  const [dates, setDates] = useState<DateRange>();
-  const [selected, setSelected] = useState(options[3]);
+  const [selected, setSelected] = useState<DateRange | Options | undefined>(
+    DEFAULT_OPTION,
+  );
 
   return (
     <div className="flex">
       <Popover>
         <Float
           portal
-          placement="bottom"
+          placement="bottom-end"
           enter="transition ease-out duration-200"
           enterFrom="opacity-0 translate-y-1"
           enterTo="opacity-100 translate-y-0"
@@ -65,9 +68,9 @@ export const DayPicker = ({
                   <IoChevronForward className="h-4 w-4" />
                 ),
               }}
-              selected={dates}
+              selected={typeof selected === "string" ? undefined : selected}
               // @ts-expect-error
-              onSelect={setDates}
+              onSelect={setSelected}
               {...props}
             />
           </Popover.Panel>
@@ -89,12 +92,40 @@ export const DayPicker = ({
             as={Button}
             className={"flex h-full items-center gap-2 rounded-l-none"}
           >
-            {selected}
+            {(() => {
+              // Option from dropdown
+              if (typeof selected === "string") {
+                return selected;
+              }
+
+              // DateRange
+              else {
+                if (selected && selected.from) {
+                  const intlDateTimeFormatter = new Intl.DateTimeFormat(
+                    undefined,
+                    {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    },
+                  );
+                  return intlDateTimeFormatter.formatRange(
+                    selected.from!,
+                    selected.to ?? selected.from!,
+                  );
+                }
+                // No date selected; go back to default option
+                else {
+                  setSelected(DEFAULT_OPTION);
+                  return DEFAULT_OPTION;
+                }
+              }
+            })()}
             <IoChevronDown aria-hidden />
           </Listbox.Button>
 
           <Listbox.Options className="mt-1 min-w-[15ch] space-y-1 rounded-2xl border-2 bg-white p-1 shadow-lg">
-            {options.map((option, index) => (
+            {OPTIONS.map((option, index) => (
               <Listbox.Option
                 value={option}
                 key={index}
