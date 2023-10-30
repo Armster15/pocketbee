@@ -1,7 +1,7 @@
 import { useState, type ReactElement, type ReactNode } from "react";
 import type { NextPage } from "next";
 import type { AppProps, AppType } from "next/app";
-import { api } from "$/utils/api";
+import { api } from "$/lib/api";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import {
   SessionContextProvider,

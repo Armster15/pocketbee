@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import { NextPageWithLayout } from "$/pages/_app";
-import { api } from "$/utils/api";
+import { api } from "$/lib/api";
 import { Dialog, Transition } from "@headlessui/react";
 import { RootLayout } from "$/components/RootLayout";
 import { Button } from "$/components/Button";

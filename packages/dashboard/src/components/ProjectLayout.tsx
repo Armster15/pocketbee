@@ -2,7 +2,7 @@ import { type PropsWithChildren, type ComponentProps } from "react";
 import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { api } from "$/utils/api";
+import { api } from "$/lib/api";
 import { IoStatsChart, IoSettings } from "react-icons/io5";
 import Skeleton from "react-loading-skeleton";
 

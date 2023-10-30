@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "$/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "$/api/trpc";
 import { TRPCError } from "@trpc/server";
 import niceTry from "nice-try";
 

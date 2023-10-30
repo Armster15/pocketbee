@@ -3,7 +3,7 @@ import Head from "next/head";
 import { NextPageWithLayout } from "$/pages/_app";
 import { RootLayout } from "$/components/RootLayout";
 import { ProjectLayout } from "$/components/ProjectLayout";
-import { api } from "$/utils/api";
+import { api } from "$/lib/api";
 import { ActiveUsersWidget } from "$/components/widgets/ActiveUsers";
 import { SessionsWidget } from "$/components/widgets/Sessions";
 

@@ -1,5 +1,5 @@
-import { createTRPCRouter } from "$/server/api/trpc";
-import { projectsRouter } from "$/server/api/routers/projects";
+import { createTRPCRouter } from "$/api/trpc";
+import { projectsRouter } from "$/api/routers/projects";
 
 /**
  * This is the primary router for your server.

@@ -1,6 +1,6 @@
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { IoPerson } from "react-icons/io5";
-import { api } from "$/utils/api";
+import { api } from "$/lib/api";
 import Skeleton from "react-loading-skeleton";
 
 type Data = { date: Date; sessions: number };

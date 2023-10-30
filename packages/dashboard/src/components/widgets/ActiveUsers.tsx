@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import clsx from "clsx";
-import { api } from "$/utils/api";
+import { api } from "$/lib/api";
 import Skeleton from "react-loading-skeleton";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
