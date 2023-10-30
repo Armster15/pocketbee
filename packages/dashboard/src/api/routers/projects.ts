@@ -27,29 +27,30 @@ export const projectsRouter = createTRPCRouter({
   getActiveUsers: protectedProcedure
     .input(z.object({ projectId: z.string() }))
     .query(async ({ input: { projectId }, ctx: { user, prisma } }) => {
-      const { token: projectToken } =
-        (await prisma.projects.findUnique({
-          where: { id: projectId },
-          select: { token: true },
-        })) ?? {};
+      const res = await prisma.projects.findUnique({
+        where: { id: projectId, user_id: user.id },
+        include: {
+          _count: {
+            select: {
+              session_events: {
+                where: {
+                  end_time: null,
+                },
+              },
+            },
+          },
+        },
+      });
 
-      if (!projectToken) {
+      if (!res) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Project with id not found",
         });
       }
 
-      const noOfActiveUsers = await prisma.session_events.count({
-        where: {
-          project_token: projectToken,
-          end_time: null,
-        },
-      });
-
-      return noOfActiveUsers;
+      return res._count.session_events;
     }),
-
   rename: protectedProcedure
     .input(z.object({ projectId: z.string(), name: z.string().min(1) }))
     .mutation(async ({ input: { projectId, name }, ctx: { user, prisma } }) => {
