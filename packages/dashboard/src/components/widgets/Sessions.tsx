@@ -29,49 +29,55 @@ export const SessionsWidget = ({
       )}
       {...props}
     >
-      <h3 className="px-2 pt-1 text-xl font-semibold">Sessions</h3>
+      {project ? (
+        <>
+          <h3 className="px-2 pt-1 text-xl font-semibold">Sessions</h3>
 
-      {project && (
-        <ResponsiveContainer width={"100%"} height={"80%"}>
-          <BarChart data={data}>
-            <Bar dataKey="sessions" fill="#8884d8" />
-            <XAxis
-              dataKey="date"
-              tickFormatter={(date: Date) => {
-                const month = date.toLocaleString("default", {
-                  month: "short",
-                });
-                const day = date.getUTCDate();
-                return month + " " + day;
-              }}
-              stroke="#8884d8"
-            />
+          <ResponsiveContainer width={"100%"} height={"80%"}>
+            <BarChart data={data}>
+              <Bar dataKey="sessions" fill="#8884d8" />
+              <XAxis
+                dataKey="date"
+                tickFormatter={(date: Date) => {
+                  const month = date.toLocaleString("default", {
+                    month: "short",
+                  });
+                  const day = date.getUTCDate();
+                  return month + " " + day;
+                }}
+                stroke="#8884d8"
+              />
 
-            <Tooltip
-              content={({ payload }) => {
-                if (payload && payload[0] && payload[0].payload) {
-                  const data = payload[0].payload as Data;
+              <Tooltip
+                content={({ payload }) => {
+                  if (payload && payload[0] && payload[0].payload) {
+                    const data = payload[0].payload as Data;
 
-                  return (
-                    <div className="rounded border bg-white p-3 text-center shadow-md">
-                      <p className="flex items-center justify-center gap-2 text-gray-800">
-                        <IoPerson aria-hidden />
-                        {data.sessions.toLocaleString()}
-                        <span className="sr-only"> sessions</span>
-                      </p>
+                    return (
+                      <div className="rounded border bg-white p-3 text-center shadow-md">
+                        <p className="flex items-center justify-center gap-2 text-gray-800">
+                          <IoPerson aria-hidden />
+                          {data.sessions.toLocaleString()}
+                          <span className="sr-only"> sessions</span>
+                        </p>
 
-                      <p className="mt-1 text-sm text-gray-600">
-                        {data.date.toLocaleDateString()}
-                      </p>
-                    </div>
-                  );
-                }
-              }}
-              cursor={false}
-              isAnimationActive={false}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+                        <p className="mt-1 text-sm text-gray-600">
+                          {data.date.toLocaleDateString()}
+                        </p>
+                      </div>
+                    );
+                  }
+                }}
+                cursor={false}
+                isAnimationActive={false}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </>
+      ) : (
+        <>
+          <Skeleton count={8} />
+        </>
       )}
     </div>
   );

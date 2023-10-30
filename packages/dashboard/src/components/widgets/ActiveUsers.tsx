@@ -74,7 +74,7 @@ export const ActiveUsersWidget = ({
       {...props}
     >
       {(() => {
-        if (isLoading && !activeUsers) return <Skeleton count={6} />;
+        if (isLoading && !activeUsers) return <Skeleton count={8} />;
         if (isError) return <p className="text-red-500">An error occurred</p>;
 
         return (
