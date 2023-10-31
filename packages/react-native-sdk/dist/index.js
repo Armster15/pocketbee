@@ -45,6 +45,29 @@ module.exports = __toCommonJS(src_exports);
 var import_react_native = require("react-native");
 var SecureStore = __toESM(require("expo-secure-store"));
 var import_react_native_url_polyfill = require("react-native-url-polyfill");
+
+// src/custom-websocket.ts
+var CustomWebSocket = class extends WebSocket {
+  constructor(url, protocols) {
+    super(url, protocols);
+  }
+  send(data) {
+    if (this.readyState === this.OPEN) {
+      try {
+        super.send(data);
+      } catch (err) {
+        console.error(
+          "An error occurred when sending a message to a websocket: ",
+          err,
+        );
+      }
+    } else {
+      console.warn("WebSocket message not sent as connection is not open");
+    }
+  }
+};
+
+// src/index.ts
 var DEFAULT_API_ROOT = "wss://v0-1-ws-pocketbee.armaan.cc/";
 var SECURE_STORE_OPTIONS = {
   keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK,
@@ -71,7 +94,7 @@ async function sendStart() {
     !ws ||
     (ws && (ws.readyState === ws.CLOSING || ws.readyState === ws.CLOSED))
   ) {
-    ws = new WebSocket(url.href);
+    ws = new CustomWebSocket(url.href);
     wsPingIntervalId = window.setInterval(() => {
       ws == null ? void 0 : ws.send(JSON.stringify({ event: "ping" }));
     }, 1e3 * 60);
@@ -105,7 +128,6 @@ async function sendEnd() {
 var pocketbee = {
   init: async (options) => {
     var _a;
-    import_react_native.AppState.addEventListener("change", onAppStateChange);
     let userId = await SecureStore.getItemAsync(
       "pocketbee_uid",
       SECURE_STORE_OPTIONS,
@@ -130,6 +152,7 @@ var pocketbee = {
       console.log(`\u{1F41D} User ID: ${userId}`);
     }
     sendStart();
+    import_react_native.AppState.addEventListener("change", onAppStateChange);
   },
 };
 // Annotate the CommonJS export names for ESM import in node:

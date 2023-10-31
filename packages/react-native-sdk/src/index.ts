@@ -2,6 +2,7 @@ import { AppState, type AppStateStatus } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import type { Options, Store } from "./types";
 import { URL } from "react-native-url-polyfill";
+import { CustomWebSocket } from "./custom-websocket";
 
 const DEFAULT_API_ROOT = "wss://v0-1-ws-pocketbee.armaan.cc/";
 const SECURE_STORE_OPTIONS: SecureStore.SecureStoreOptions = {
@@ -9,7 +10,7 @@ const SECURE_STORE_OPTIONS: SecureStore.SecureStoreOptions = {
 };
 
 let store: Store;
-let ws: WebSocket | undefined = undefined;
+let ws: CustomWebSocket | undefined = undefined;
 let wsPingIntervalId: number | undefined = undefined;
 
 async function onAppStateChange(status: AppStateStatus) {
@@ -31,7 +32,7 @@ async function sendStart() {
     !ws ||
     (ws && (ws.readyState === ws.CLOSING || ws.readyState === ws.CLOSED))
   ) {
-    ws = new WebSocket(url.href);
+    ws = new CustomWebSocket(url.href);
 
     wsPingIntervalId = window.setInterval(() => {
       ws?.send(JSON.stringify({ event: "ping" }));
@@ -71,8 +72,6 @@ async function sendEnd() {
 
 export const pocketbee = {
   init: async (options: Options) => {
-    AppState.addEventListener("change", onAppStateChange);
-
     let userId = await SecureStore.getItemAsync(
       "pocketbee_uid",
       SECURE_STORE_OPTIONS,
@@ -99,5 +98,6 @@ export const pocketbee = {
     }
 
     sendStart();
+    AppState.addEventListener("change", onAppStateChange);
   },
 };
