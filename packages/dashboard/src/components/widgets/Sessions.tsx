@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { IoPerson } from "react-icons/io5";
-import { api } from "$/lib/api";
+import { api, type RouterInputs } from "$/lib/api";
 import Skeleton from "react-loading-skeleton";
 import { DayPicker } from "$/components/DayPicker";
 import type { DivProps } from "react-html-props";
@@ -19,6 +19,10 @@ export const SessionsWidget = ({
   ...props
 }: SessionsWidgetProps) => {
   const [timeZone, setTimeZone] = useState<string>();
+  const [groupingInterval, setGroupingInterval] =
+    useState<RouterInputs["projects"]["getSessions"]["groupingInterval"]>(
+      "day",
+    );
 
   useEffect(() => {
     setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -27,7 +31,7 @@ export const SessionsWidget = ({
   const { data, isLoading, isError } = api.projects.getSessions.useQuery<
     Data[]
   >(
-    { projectId: projectId!, timeZone: timeZone!, groupingInterval: "year" },
+    { projectId: projectId!, timeZone: timeZone!, groupingInterval },
     { enabled: !!projectId && !!timeZone },
   );
 
@@ -56,11 +60,19 @@ export const SessionsWidget = ({
                 <XAxis
                   dataKey="date"
                   tickFormatter={(date: Date) => {
-                    const month = date.toLocaleString("default", {
-                      month: "short",
-                    });
-                    const day = date.getUTCDate();
-                    return month + " " + day;
+                    if (groupingInterval === "hour") {
+                      return date.toLocaleTimeString(undefined, {
+                        hour12: true,
+                        hour: "numeric",
+                      });
+                    } else if (groupingInterval === "day") {
+                      const month = date.toLocaleString("default", {
+                        month: "short",
+                      });
+                      const day = date.getUTCDate();
+                      return month + " " + day;
+                    }
+                    return "Not implemented";
                   }}
                   stroke="#8884d8"
                 />
