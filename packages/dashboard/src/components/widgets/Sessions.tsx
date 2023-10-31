@@ -51,7 +51,7 @@ export const SessionsWidget = ({
           <>
             <div className="flex justify-between">
               <h3 className="px-2 pt-1 text-xl font-semibold">Sessions</h3>
-              <DayPicker />
+              {/* <DayPicker /> */}
             </div>
 
             <ResponsiveContainer width={"100%"} height={"80%"}>
