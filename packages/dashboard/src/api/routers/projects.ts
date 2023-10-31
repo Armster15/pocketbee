@@ -53,26 +53,31 @@ export const projectsRouter = createTRPCRouter({
     }),
 
   getSessions: protectedProcedure
-    .input(z.object({ projectId: z.string() }))
-    .query(async ({ input: { projectId }, ctx: { user, prisma } }) => {
-      type Res = { date: Date; sessions: BigInt }[];
+    .input(z.object({ projectId: z.string(), timeZone: z.string() }))
+    .query(
+      async ({ input: { projectId, timeZone }, ctx: { user, prisma } }) => {
+        type Res = { date: Date; sessions: BigInt }[];
 
-      const res = await prisma.$queryRaw<Res>`
-        SELECT DATE(e.start_time) AS date, COUNT(*) AS sessions
-        FROM public.session_events AS e
-        INNER JOIN public.projects AS p ON e.project_token = p.token
-        WHERE p.id = uuid(${projectId}) AND p.user_id = uuid(${user.id})
-        -- The DATE(...) makes it so we group it by individual days
-        GROUP BY DATE(e.start_time)
-        ORDER BY DATE(e.start_time);
-      `;
+        const res = await prisma.$queryRaw<Res>`
+          SELECT DATE(start_time) AS date, COUNT(*) AS sessions
+          FROM (
+            SELECT e.start_time AT TIME ZONE ${timeZone} AS start_time
+            FROM public.session_events AS e
+            INNER JOIN public.projects AS p ON e.project_token = p.token
+            WHERE p.id = uuid(${projectId}) AND p.user_id = uuid(${user.id})
+          ) AS subquery
+          -- The DATE(...) makes it so we group it by individual days
+          GROUP BY DATE(start_time)
+          ORDER BY DATE(start_time);
+        `;
 
-      // Turn BigInt to number
-      return res.map(({ date, sessions }) => ({
-        date,
-        sessions: Number(sessions),
-      }));
-    }),
+        // Turn BigInt to number
+        return res.map(({ date, sessions }) => ({
+          date,
+          sessions: Number(sessions),
+        }));
+      },
+    ),
 
   rename: protectedProcedure
     .input(z.object({ projectId: z.string(), name: z.string().min(1) }))

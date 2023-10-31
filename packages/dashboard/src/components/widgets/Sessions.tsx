@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { IoPerson } from "react-icons/io5";
@@ -17,9 +18,18 @@ export const SessionsWidget = ({
   className,
   ...props
 }: SessionsWidgetProps) => {
+  const [timeZone, setTimeZone] = useState<string>();
+
+  useEffect(() => {
+    setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  }, []);
+
   const { data, isLoading, isError } = api.projects.getSessions.useQuery<
     Data[]
-  >({ projectId: projectId! }, { enabled: !!projectId });
+  >(
+    { projectId: projectId!, timeZone: timeZone! },
+    { enabled: !!projectId && !!timeZone },
+  );
 
   return (
     <div
