@@ -53,22 +53,42 @@ export const projectsRouter = createTRPCRouter({
     }),
 
   getSessions: protectedProcedure
-    .input(z.object({ projectId: z.string(), timeZone: z.string() }))
+    .input(
+      z.object({
+        projectId: z.string(),
+        timeZone: z.string(),
+        groupingInterval: z.union([
+          z.literal("hour"),
+          z.literal("day"),
+          z.literal("month"),
+          z.literal("year"),
+        ]),
+      }),
+    )
     .query(
-      async ({ input: { projectId, timeZone }, ctx: { user, prisma } }) => {
+      async ({
+        input: { projectId, timeZone, groupingInterval },
+        ctx: { user, prisma },
+      }) => {
         type Res = { date: Date; sessions: BigInt }[];
 
         const res = await prisma.$queryRaw<Res>`
-          SELECT DATE(start_time) AS date, COUNT(*) AS sessions
+          SELECT
+              CASE
+                  WHEN ${groupingInterval} = 'hour'  THEN DATE_TRUNC('hour', start_time)
+                  WHEN ${groupingInterval} = 'day'   THEN DATE_TRUNC('day', start_time)
+                  WHEN ${groupingInterval} = 'month' THEN DATE_TRUNC('month', start_time)
+                  WHEN ${groupingInterval} = 'year'  THEN DATE_TRUNC('year', start_time)
+              END AS date,
+              COUNT(*) AS sessions
           FROM (
-            SELECT e.start_time AT TIME ZONE ${timeZone} AS start_time
-            FROM public.session_events AS e
-            INNER JOIN public.projects AS p ON e.project_token = p.token
-            WHERE p.id = uuid(${projectId}) AND p.user_id = uuid(${user.id})
+              SELECT e.start_time AT TIME ZONE ${timeZone} AS start_time
+              FROM public.session_events AS e
+              INNER JOIN public.projects AS p ON e.project_token = p.token
+              WHERE p.id = uuid(${projectId}) AND p.user_id = uuid(${user.id})
           ) AS subquery
-          -- The DATE(...) makes it so we group it by individual days
-          GROUP BY DATE(start_time)
-          ORDER BY DATE(start_time);
+          GROUP BY date
+          ORDER BY date;
         `;
 
         // Turn BigInt to number

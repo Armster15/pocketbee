@@ -27,7 +27,7 @@ export const SessionsWidget = ({
   const { data, isLoading, isError } = api.projects.getSessions.useQuery<
     Data[]
   >(
-    { projectId: projectId!, timeZone: timeZone! },
+    { projectId: projectId!, timeZone: timeZone!, groupingInterval: "year" },
     { enabled: !!projectId && !!timeZone },
   );
 
