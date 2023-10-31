@@ -12,11 +12,13 @@
     "esbuild": "^0.19.5",
     "esbuild-register": "^3.5.0",
     "nice-try": "^3.0.1",
+    "uuid": "^9.0.1",
     "ws": "^8.14.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/nice-try": "^2.1.1",
+    "@types/uuid": "^9.0.6",
     "@types/ws": "^8.5.8"
   },
   "peerDependencies": {

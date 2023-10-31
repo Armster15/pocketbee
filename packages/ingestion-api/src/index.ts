@@ -7,6 +7,7 @@ import url from "node:url";
 import * as dotenv from "dotenv";
 import { wsReqSchema, type WSResSchema } from "./schema";
 import niceTry from "nice-try";
+import { v4 as uuidv4 } from "uuid";
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ wss.on("connection", async function connection(ws, req) {
   }
 
   let sessionEvent: SessionEvent | undefined = undefined;
+  let sessionEventId = uuidv4();
 
   // on close
   ws.on("close", async (code) => {
@@ -57,8 +59,31 @@ wss.on("connection", async function connection(ws, req) {
           console.error(err);
           ws.close(1011, "An error occurred");
         }
-      } else {
-        console.warn(`No session event id for user id of ${userId}`);
+      }
+
+      // Hack: in the event that a websocket connects then immediately closes,
+      // there is going to be some delay where Prisma creates the DB record, but in
+      // here it's gonna say the session event doesn't exist, leading to the session event
+      // never getting an `end_time`.
+      // To prevent this, we wait for 20 seconds and then attempt to modify the session event  again
+      else {
+        console.info(`No session event id for user id of ${userId}`);
+        setTimeout(async () => {
+          try {
+            await prisma.session_events.update({
+              where: {
+                id: sessionEventId,
+                project_token: projectToken,
+              },
+              data: {
+                end_time: new Date(),
+              },
+            });
+          } catch (err) {
+            console.error(err);
+            ws.close(1011, "An error occurred");
+          }
+        }, 20 * 1000);
       }
     }
   });
@@ -96,6 +121,7 @@ wss.on("connection", async function connection(ws, req) {
       data: {
         app_user_id: userId,
         project_token: projectToken,
+        id: sessionEventId,
       },
     });
   } catch (err) {
