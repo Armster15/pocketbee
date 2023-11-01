@@ -5,6 +5,7 @@ import { RootLayout } from "$/components/RootLayout";
 import { ProjectLayout } from "$/components/ProjectLayout";
 import { api } from "$/lib/api";
 import { Button } from "$/components/Button";
+import { Input } from "$/components/Input";
 import Skeleton from "react-loading-skeleton";
 import type { FormProps } from "react-html-props";
 
@@ -58,10 +59,10 @@ const ProjectPage: NextPageWithLayout = () => {
 
       <form onSubmit={handleRenameProject} className="mb-6">
         <h3>Name</h3>
-        <input
+        <Input
           name="name"
           defaultValue={project.name}
-          className="mr-2 rounded-2xl border-2 p-2"
+          className="mr-2"
           autoComplete="off"
         />
         <Button>Update Name</Button>
@@ -69,8 +70,8 @@ const ProjectPage: NextPageWithLayout = () => {
 
       <div className="mb-8">
         <h3>Project Token</h3>
-        <input
-          className="mr-2 w-[350px] rounded-2xl border-2 p-2"
+        <Input
+          className="mr-2 w-[350px]"
           value={project.token}
           readOnly
           onClick={(ev) => (ev.target as HTMLInputElement).select()}
