@@ -5,6 +5,7 @@ import { api } from "$/lib/api";
 import { RootLayout } from "$/components/RootLayout";
 import Skeleton from "react-loading-skeleton";
 import { CreateProjectButtonWithModal } from "$/components/modals/CreateProjectButtonWithModal";
+import { ProjectIcon } from "$/components/ProjectIcon";
 
 const Home: NextPageWithLayout = () => {
   const { data: projects, error, isLoading } = api.projects.getAll.useQuery();
@@ -26,9 +27,10 @@ const Home: NextPageWithLayout = () => {
               <Link
                 href={`/project/${project.id}`}
                 key={project.id}
-                className="h-36 rounded-2xl border-2 bg-white p-5 duration-100 hover:shadow active:bg-gray-100/95"
+                className="flex h-48 flex-col justify-between rounded-2xl border-2 bg-white p-5 duration-100 hover:shadow active:bg-gray-100/95"
               >
-                {project.name}
+                <ProjectIcon project={project} />
+                <span className="text-2xl font-medium">{project.name}</span>
               </Link>
             ))}
 

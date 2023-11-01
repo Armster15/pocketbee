@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { api } from "$/lib/api";
 import { IoStatsChart, IoSettings } from "react-icons/io5";
 import Skeleton from "react-loading-skeleton";
+import { ProjectIcon } from "$/components/ProjectIcon";
 
 export const ProjectLayout = ({ children }: PropsWithChildren) => {
   const router = useRouter();
@@ -19,33 +20,17 @@ export const ProjectLayout = ({ children }: PropsWithChildren) => {
     <div className="md:flex">
       <aside className="mb-6 md:mb-0 md:mr-12 md:w-56">
         <div>
-          {(() => {
-            if (project) {
-              if (project.image_url) {
-                return (
-                  <div className="ml-1 flex flex-col gap-1">
-                    <img
-                      src={project.image_url!}
-                      alt={`Project icon for ${project.name}`}
-                      width={64}
-                      height={64}
-                      className="rounded-2xl shadow"
-                    />
+          {project ? (
+            <div className="ml-1 flex flex-col gap-1">
+              <ProjectIcon project={project} />
 
-                    <h2 className="mt-1 max-w-full truncate text-xl font-semibold">
-                      {project.name}
-                    </h2>
-                  </div>
-                );
-              }
-              return (
-                <h2 className="ml-1 truncate text-2xl font-semibold">
-                  {project.name}
-                </h2>
-              );
-            }
-            return <Skeleton />;
-          })()}
+              <h2 className="mt-2 max-w-full truncate text-xl font-semibold">
+                {project.name}
+              </h2>
+            </div>
+          ) : (
+            <Skeleton />
+          )}
         </div>
 
         <div className="child:flex-1 mt-5 flex gap-1 md:grid">
