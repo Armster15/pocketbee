@@ -7,6 +7,7 @@ import {
   SessionContextProvider,
   type Session,
 } from "@supabase/auth-helpers-react";
+import { Toaster } from "react-hot-toast";
 import "$/styles/globals.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import "react-day-picker/dist/style.css";
@@ -36,6 +37,7 @@ const MyApp: AppType<{
       initialSession={pageProps.initialSession}
     >
       {getLayout(<Component {...pageProps} />)}
+      <Toaster />
     </SessionContextProvider>
   );
 };

@@ -18,9 +18,35 @@ export const ProjectLayout = ({ children }: PropsWithChildren) => {
   return (
     <div className="md:flex">
       <aside className="mb-6 md:mb-0 md:mr-12 md:w-56">
-        <h2 className="truncate text-2xl font-semibold">
-          {project?.name ?? <Skeleton />}
-        </h2>
+        <div>
+          {(() => {
+            if (project) {
+              if (project.image_url) {
+                return (
+                  <div className="ml-1 flex flex-col gap-1">
+                    <img
+                      src={project.image_url!}
+                      alt={`Project icon for ${project.name}`}
+                      width={64}
+                      height={64}
+                      className="rounded-2xl shadow"
+                    />
+
+                    <h2 className="mt-1 max-w-full truncate text-xl font-semibold">
+                      {project.name}
+                    </h2>
+                  </div>
+                );
+              }
+              return (
+                <h2 className="ml-1 truncate text-2xl font-semibold">
+                  {project.name}
+                </h2>
+              );
+            }
+            return <Skeleton />;
+          })()}
+        </div>
 
         <div className="child:flex-1 mt-5 flex gap-1 md:grid">
           <ActiveLink href={`/project/${projectId}`}>
