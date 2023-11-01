@@ -6,6 +6,7 @@ import { api } from "$/lib/api";
 import { Dialog, Transition } from "@headlessui/react";
 import { RootLayout } from "$/components/RootLayout";
 import { Button } from "$/components/Button";
+import { Input } from "$/components/Input";
 import { IoAdd } from "react-icons/io5";
 import Skeleton from "react-loading-skeleton";
 
@@ -113,8 +114,8 @@ const CreateProjectButtonWithModal = () => {
                     <div className="mt-2">
                       <label className="text-sm text-gray-500">
                         Name
-                        <input
-                          className="w-full rounded-xl border-2 p-1"
+                        <Input
+                          className="w-full"
                           value={name}
                           onChange={(ev) => setName(ev.target.value)}
                         />
@@ -122,13 +123,7 @@ const CreateProjectButtonWithModal = () => {
                     </div>
 
                     <div className="mt-6">
-                      <button
-                        type="button"
-                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                        onClick={onSubmit}
-                      >
-                        Create
-                      </button>
+                      <Button onClick={onSubmit}>Create</Button>
                     </div>
                   </form>
                 </Dialog.Panel>
