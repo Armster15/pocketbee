@@ -35,7 +35,11 @@ interface Actions {
 export interface ModalRootRef extends Actions {}
 export interface ModalRootProps extends React.PropsWithChildren {}
 export interface ModalTriggerProps extends React.PropsWithChildren {}
-export interface ModalProps extends React.PropsWithChildren {}
+export interface ModalProps extends React.PropsWithChildren {
+  /** Function that is called after the modal finishes animating its exit */
+  afterLeave?: () => void;
+}
+export interface ModalRef extends Actions {}
 
 const ModalContext = createContext<Actions>({
   isOpen: false,
@@ -67,8 +71,16 @@ export const ModalTrigger = ({ children }: ModalTriggerProps) => {
 
 export const ModalTitle = Dialog.Title;
 
-export const Modal = ({ children }: ModalProps) => {
+export const Modal = forwardRef<ModalRef, ModalProps>(function Modal(
+  { children, afterLeave },
+  ref,
+) {
   const { isOpen, setIsOpen } = useContext(ModalContext);
+
+  useImperativeHandle(ref, () => ({
+    isOpen,
+    setIsOpen,
+  }));
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -99,6 +111,7 @@ export const Modal = ({ children }: ModalProps) => {
               leave="ease-in duration-200"
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
+              afterLeave={afterLeave}
             >
               <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                 {children}
@@ -109,4 +122,4 @@ export const Modal = ({ children }: ModalProps) => {
       </Dialog>
     </Transition>
   );
-};
+});
