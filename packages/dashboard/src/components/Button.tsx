@@ -7,7 +7,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         className={clsx(
-          "rounded-xl border-2 p-3 py-2 outline-none ring-gray-300 duration-100 hover:bg-gray-50/95 focus-visible:ring-2 active:bg-gray-100",
+          "not-disabled:hover:bg-gray-50/95 not-disabled:active:bg-gray-100 rounded-xl border-2 p-3 py-2 outline-none ring-gray-300 duration-100 focus-visible:ring-2",
+          "disabled:opacity-50",
           className,
         )}
         ref={ref}
