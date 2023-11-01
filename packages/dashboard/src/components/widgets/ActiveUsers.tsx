@@ -79,6 +79,8 @@ export const ActiveUsersWidget = ({
 
         return (
           <>
+            <h3 className="sr-only">Active Users</h3>
+
             <div className="relative">
               <div className="absolute h-5 w-5 rounded-full bg-green-500" />
               <div

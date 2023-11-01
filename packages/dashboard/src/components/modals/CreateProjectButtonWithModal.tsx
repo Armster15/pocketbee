@@ -40,7 +40,7 @@ export const CreateProjectButtonWithModal = () => {
 
       <Modal>
         <ModalTitle
-          as="h3"
+          as="h2"
           className="text-lg font-medium leading-6 text-gray-900"
         >
           Create Project

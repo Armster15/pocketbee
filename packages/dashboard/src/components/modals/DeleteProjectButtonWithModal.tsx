@@ -45,7 +45,7 @@ export const DeleteProjectButtonWithModal = ({
 
       <Modal>
         <ModalTitle
-          as="h3"
+          as="h4"
           className="mb-2 text-lg font-medium leading-6 text-gray-900"
         >
           Delete Project
