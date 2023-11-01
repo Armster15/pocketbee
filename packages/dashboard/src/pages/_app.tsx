@@ -19,6 +19,11 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
+if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+  // @ts-ignore
+  import("@khanacademy/tota11y");
+}
+
 const MyApp: AppType<{
   initialSession: Session;
 }> = ({ Component, pageProps }: AppPropsWithLayout) => {
