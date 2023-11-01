@@ -106,7 +106,7 @@ const ProjectSettingsPage: NextPageWithLayout = () => {
         <Button
           onClick={async () => {
             await navigator.clipboard.writeText(project.token);
-            alert("Copied");
+            toast.success("Copied project token!");
           }}
         >
           Copy
