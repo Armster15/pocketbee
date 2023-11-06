@@ -5,9 +5,23 @@ import { IoPerson } from "react-icons/io5";
 import { api, type RouterInputs } from "$/lib/api";
 import Skeleton from "react-loading-skeleton";
 import { DayPicker } from "$/components/DayPicker";
+import {
+  subWeeks,
+  startOfDay,
+  endOfDay,
+  startOfYear,
+  endOfYear,
+  startOfMonth,
+  endOfMonth,
+  startOfHour,
+  endOfHour,
+  addMinutes,
+} from "date-fns";
+import { getGroupingInterval } from "$/lib/utils";
 import type { DivProps } from "react-html-props";
 
 type Data = { date: Date; sessions: number };
+type GetSessionsInputs = RouterInputs["projects"]["getSessions"];
 
 export interface SessionsWidgetProps extends DivProps {
   projectId: string | undefined;
@@ -19,21 +33,27 @@ export const SessionsWidget = ({
   ...props
 }: SessionsWidgetProps) => {
   const [timeZone, setTimeZone] = useState<string>();
-  const [groupingInterval, setGroupingInterval] =
-    useState<RouterInputs["projects"]["getSessions"]["groupingInterval"]>(
-      "day",
-    );
+  const [from, setFrom] = useState<GetSessionsInputs["from"]>(
+    subWeeks(startOfDay(new Date()), 1),
+  );
+  const [to, setTo] = useState<GetSessionsInputs["to"]>(startOfDay(new Date()));
+  const groupingInterval = getGroupingInterval(from, to);
 
   useEffect(() => {
     setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
   }, []);
 
-  const { data, isLoading, isError } = api.projects.getSessions.useQuery<
-    Data[]
-  >(
-    { projectId: projectId!, timeZone: timeZone!, groupingInterval },
-    { enabled: !!projectId && !!timeZone },
-  );
+  const { data, isLoading, isInitialLoading, isError, refetch } =
+    api.projects.getSessions.useQuery<Data[]>(
+      {
+        projectId: projectId!,
+        timeZone: timeZone!,
+        groupingInterval,
+        from,
+        to,
+      },
+      { enabled: !!projectId && !!timeZone },
+    );
 
   return (
     <div
@@ -44,7 +64,7 @@ export const SessionsWidget = ({
       {...props}
     >
       {(() => {
-        if (isLoading && !data) return <Skeleton count={8} />;
+        if (isInitialLoading) return <Skeleton count={8} />;
         if (isError) return <p className="text-red-500">An error occurred</p>;
 
         return (
@@ -56,23 +76,72 @@ export const SessionsWidget = ({
 
             <ResponsiveContainer width={"100%"} height={"80%"}>
               <BarChart data={data}>
-                <Bar dataKey="sessions" fill="#8884d8" />
+                <Bar
+                  className="cursor-pointer"
+                  onClick={({ date }: Data) => {
+                    if (groupingInterval === "hour") {
+                      setFrom(startOfHour(date));
+                      setTo(endOfHour(date));
+                    } else if (groupingInterval === "day") {
+                      setFrom(startOfDay(date));
+                      setTo(endOfDay(date));
+                    } else if (groupingInterval === "month") {
+                      setFrom(startOfMonth(date));
+                      setTo(endOfMonth(date));
+                    } else if (groupingInterval === "year") {
+                      setFrom(startOfYear(date));
+                      setTo(endOfYear(date));
+                    }
+                  }}
+                  dataKey="sessions"
+                  fill="#8884d8"
+                />
                 <XAxis
                   dataKey="date"
                   tickFormatter={(date: Date) => {
-                    if (groupingInterval === "hour") {
+                    // 10 minute intervals
+                    if (groupingInterval === "10min") {
+                      return date.toLocaleTimeString(undefined, {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      });
+                      // + "-" +
+                      // addMinutes(date, 10).toLocaleTimeString(undefined, {
+                      //   hour: "2-digit",
+                      //   minute: "2-digit",
+                      // })
+                    }
+
+                    // Hour intervals
+                    else if (groupingInterval === "hour") {
                       return date.toLocaleTimeString(undefined, {
                         hour12: true,
                         hour: "numeric",
                       });
-                    } else if (groupingInterval === "day") {
+                    }
+
+                    // Day intervals
+                    else if (groupingInterval === "day") {
                       const month = date.toLocaleString("default", {
                         month: "short",
                       });
                       const day = date.getUTCDate();
                       return month + " " + day;
                     }
-                    return "Not implemented";
+
+                    // Month intervals
+                    else if (groupingInterval === "month") {
+                      return date.toLocaleString("default", {
+                        month: "short",
+                      });
+                    }
+
+                    // Year intervals
+                    else if (groupingInterval === "year") {
+                      return String(date.getUTCFullYear());
+                    }
+
+                    return "Not implemented"; // This should not happen
                   }}
                   stroke="#8884d8"
                 />

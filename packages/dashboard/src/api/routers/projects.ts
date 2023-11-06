@@ -58,23 +58,27 @@ export const projectsRouter = createTRPCRouter({
         projectId: z.string(),
         timeZone: z.string(),
         groupingInterval: z.union([
+          z.literal("10min"),
           z.literal("hour"),
           z.literal("day"),
           z.literal("month"),
           z.literal("year"),
         ]),
+        from: z.date(),
+        to: z.date(),
       }),
     )
     .query(
       async ({
-        input: { projectId, timeZone, groupingInterval },
+        input: { projectId, timeZone, groupingInterval, from, to },
         ctx: { user, prisma },
       }) => {
         type Res = { date: Date; sessions: BigInt }[];
-
+        console.log({ from, to });
         const res = await prisma.$queryRaw<Res>`
           SELECT
               CASE
+                  WHEN ${groupingInterval} = '10min' THEN DATE_TRUNC('minute', start_time - (DATE_PART('minute', start_time)::integer % 10) * INTERVAL '1 minute')
                   WHEN ${groupingInterval} = 'hour'  THEN DATE_TRUNC('hour', start_time)
                   WHEN ${groupingInterval} = 'day'   THEN DATE_TRUNC('day', start_time)
                   WHEN ${groupingInterval} = 'month' THEN DATE_TRUNC('month', start_time)
@@ -86,6 +90,8 @@ export const projectsRouter = createTRPCRouter({
               FROM public.session_events AS e
               INNER JOIN public.projects AS p ON e.project_token = p.token
               WHERE p.id = uuid(${projectId}) AND p.user_id = uuid(${user.id})
+              AND e.start_time >= ${from}
+              AND e.start_time <= ${to}
           ) AS subquery
           GROUP BY date
           ORDER BY date;
