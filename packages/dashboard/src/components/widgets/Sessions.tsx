@@ -62,7 +62,7 @@ export const SessionsWidget = ({
       {...props}
     >
       {(() => {
-        if (isInitialLoading) return <Skeleton count={8} />;
+        if (isInitialLoading || !data) return <Skeleton count={8} />;
         if (isError) return <p className="text-red-500">An error occurred</p>;
 
         return (
