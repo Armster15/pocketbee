@@ -1,12 +1,12 @@
 import { atomWithHash } from "jotai-location";
 import { Router } from "next/router";
-import { subWeeks, startOfDay } from "date-fns";
+import { subWeeks, startOfDay, endOfDay } from "date-fns";
 import { invalidDate } from "$/lib/utils";
 
 function getDefaultRange() {
   return {
     from: subWeeks(startOfDay(new Date()), 1),
-    to: startOfDay(new Date()),
+    to: endOfDay(new Date()),
   };
 }
 
