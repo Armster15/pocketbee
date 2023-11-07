@@ -41,7 +41,7 @@ export const SessionsWidget = ({
     setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
   }, []);
 
-  const { data, isLoading, isInitialLoading, isError, refetch } =
+  const { data, isInitialLoading, isError, isPreviousData } =
     api.projects.getSessions.useQuery<Data[]>(
       {
         projectId: projectId!,
@@ -50,7 +50,7 @@ export const SessionsWidget = ({
         from,
         to,
       },
-      { enabled: !!projectId && !!timeZone },
+      { enabled: !!projectId && !!timeZone, keepPreviousData: true },
     );
 
   return (
@@ -101,10 +101,13 @@ export const SessionsWidget = ({
                   }}
                   dataKey="sessions"
                   fill="#8884d8"
+                  opacity={isPreviousData ? "0.7" : undefined}
                 />
                 <XAxis
                   dataKey="date"
                   tickFormatter={(date: Date) => {
+                    if (isPreviousData) return "";
+
                     // 10 minute intervals
                     if (groupingInterval === "10min") {
                       return date.toLocaleTimeString(undefined, {
