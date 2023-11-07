@@ -1,16 +1,21 @@
 import { atomWithHash } from "jotai-location";
 import { Router } from "next/router";
-import { subWeeks, startOfDay, endOfDay } from "date-fns";
+import { subDays, startOfDay, endOfDay } from "date-fns";
 import { invalidDate } from "$/lib/utils";
 
-function getDefaultRange() {
+export type Range = {
+  from: Date;
+  to: Date;
+};
+
+export function getDefaultRange(): Range {
   return {
-    from: subWeeks(startOfDay(new Date()), 1),
+    from: subDays(startOfDay(new Date()), 6),
     to: endOfDay(new Date()),
   };
 }
 
-export const rangeAtom = atomWithHash("range", getDefaultRange(), {
+export const rangeAtom = atomWithHash<Range>("range", getDefaultRange(), {
   serialize: ({ from, to }) =>
     new URLSearchParams({
       from: from.getTime().toString(),

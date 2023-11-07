@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { IoPerson } from "react-icons/io5";
-import { api, type RouterInputs } from "$/lib/api";
+import { api } from "$/lib/api";
 import Skeleton from "react-loading-skeleton";
 import { DayPicker } from "$/components/DayPicker";
 import {
@@ -18,7 +18,7 @@ import {
 import { getGroupingInterval } from "$/lib/utils";
 import type { DivProps } from "react-html-props";
 import { useAtom } from "jotai";
-import { rangeAtom } from "$/lib/atoms";
+import { rangeAtom } from "$/lib/range";
 import toast from "react-hot-toast";
 
 type Data = { date: Date; sessions: number };
@@ -69,7 +69,7 @@ export const SessionsWidget = ({
           <>
             <div className="flex justify-between">
               <h3 className="px-2 pt-1 text-xl font-semibold">Sessions</h3>
-              {/* <DayPicker /> */}
+              <DayPicker range={range} setRange={setRange} />
             </div>
 
             <ResponsiveContainer width={"100%"} height={"80%"}>
