@@ -19,9 +19,9 @@ import { getGroupingInterval } from "$/lib/utils";
 import type { DivProps } from "react-html-props";
 import { useAtom } from "jotai";
 import { rangeAtom } from "$/lib/atoms";
+import toast from "react-hot-toast";
 
 type Data = { date: Date; sessions: number };
-type GetSessionsInputs = RouterInputs["projects"]["getSessions"];
 
 export interface SessionsWidgetProps extends DivProps {
   projectId: string | undefined;
@@ -96,6 +96,10 @@ export const SessionsWidget = ({
                       setRange({
                         from: startOfYear(date),
                         to: endOfYear(date),
+                      });
+                    } else {
+                      toast("Maximum zoom level reached", {
+                        id: "Maximum zoom level reached",
                       });
                     }
                   }}
