@@ -83,7 +83,7 @@ export const projectsRouter = createTRPCRouter({
                   WHEN ${groupingInterval} = 'day'   THEN DATE_TRUNC('day', start_time)
                   WHEN ${groupingInterval} = 'month' THEN DATE_TRUNC('month', start_time)
                   WHEN ${groupingInterval} = 'year'  THEN DATE_TRUNC('year', start_time)
-              END AS date,
+              END AT TIME ZONE ${timeZone} AS date,
               COUNT(*) AS sessions
           FROM (
               SELECT e.start_time AT TIME ZONE ${timeZone} AS start_time
