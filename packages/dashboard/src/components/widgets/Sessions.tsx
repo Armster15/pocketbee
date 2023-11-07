@@ -6,7 +6,6 @@ import { api, type RouterInputs } from "$/lib/api";
 import Skeleton from "react-loading-skeleton";
 import { DayPicker } from "$/components/DayPicker";
 import {
-  subWeeks,
   startOfDay,
   endOfDay,
   startOfYear,
@@ -15,10 +14,11 @@ import {
   endOfMonth,
   startOfHour,
   endOfHour,
-  addMinutes,
 } from "date-fns";
 import { getGroupingInterval } from "$/lib/utils";
 import type { DivProps } from "react-html-props";
+import { useAtom } from "jotai";
+import { rangeAtom } from "$/lib/atoms";
 
 type Data = { date: Date; sessions: number };
 type GetSessionsInputs = RouterInputs["projects"]["getSessions"];
@@ -33,10 +33,8 @@ export const SessionsWidget = ({
   ...props
 }: SessionsWidgetProps) => {
   const [timeZone, setTimeZone] = useState<string>();
-  const [from, setFrom] = useState<GetSessionsInputs["from"]>(
-    subWeeks(startOfDay(new Date()), 1),
-  );
-  const [to, setTo] = useState<GetSessionsInputs["to"]>(startOfDay(new Date()));
+  const [range, setRange] = useAtom(rangeAtom);
+  const { from, to } = range;
   const groupingInterval = getGroupingInterval(from, to);
 
   useEffect(() => {
@@ -80,17 +78,25 @@ export const SessionsWidget = ({
                   className="cursor-pointer"
                   onClick={({ date }: Data) => {
                     if (groupingInterval === "hour") {
-                      setFrom(startOfHour(date));
-                      setTo(endOfHour(date));
+                      setRange({
+                        from: startOfHour(date),
+                        to: endOfHour(date),
+                      });
                     } else if (groupingInterval === "day") {
-                      setFrom(startOfDay(date));
-                      setTo(endOfDay(date));
+                      setRange({
+                        from: startOfDay(date),
+                        to: endOfDay(date),
+                      });
                     } else if (groupingInterval === "month") {
-                      setFrom(startOfMonth(date));
-                      setTo(endOfMonth(date));
+                      setRange({
+                        from: startOfMonth(date),
+                        to: endOfMonth(date),
+                      });
                     } else if (groupingInterval === "year") {
-                      setFrom(startOfYear(date));
-                      setTo(endOfYear(date));
+                      setRange({
+                        from: startOfYear(date),
+                        to: endOfYear(date),
+                      });
                     }
                   }}
                   dataKey="sessions"

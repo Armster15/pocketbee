@@ -25,6 +25,8 @@
     "@trpc/server": "^10.37.1",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
+    "jotai": "^2.5.1",
+    "jotai-location": "^0.5.2",
     "next": "^13.5.4",
     "nice-try": "^3.0.1",
     "react": "18.2.0",

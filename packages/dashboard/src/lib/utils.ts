@@ -22,3 +22,6 @@ export function getGroupingInterval(
   }
   return "year";
 }
+
+/** https://stackoverflow.com/a/38182068/5721784 */
+export const invalidDate = (date: Date) => isNaN(date.getTime());
