@@ -64,8 +64,10 @@ const ProjectSettingsPage: NextPageWithLayout = () => {
         <title>Settings | Pocketbee</title>
       </Head>
 
+      <h3 className="mb-6 text-3xl font-bold">Settings</h3>
+
       <form onSubmit={handleEditProject} className="mb-12">
-        <h3 className="mb-4 text-2xl font-bold">Project Information</h3>
+        <h4 className="mb-4 text-xl font-semibold">Project Information</h4>
 
         <div className="children:flex-1 flex gap-8">
           <label className="grid">
@@ -96,7 +98,7 @@ const ProjectSettingsPage: NextPageWithLayout = () => {
       </form>
 
       <div className="mb-12">
-        <h3 className="mb-4 text-2xl font-bold">Project Token</h3>
+        <h4 className="mb-4 text-xl font-semibold">Project Token</h4>
         <Input
           className="mr-2 w-[365px]"
           value={project.token}
@@ -114,7 +116,7 @@ const ProjectSettingsPage: NextPageWithLayout = () => {
       </div>
 
       <div className="mb-12">
-        <h3 className="mb-4 text-2xl font-bold">Danger Zone</h3>
+        <h4 className="mb-4 text-xl font-semibold">Danger Zone</h4>
         <DeleteProjectButtonWithModal project={project} />
       </div>
     </>
