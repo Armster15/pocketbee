@@ -15,7 +15,7 @@ model projects {
     id             String           @id(map: "Projects_pkey") @unique(map: "Projects_id_key") @default(uuid()) @db.Uuid
     token          String           @unique(map: "Projects_token_key") @default(uuid()) @db.Uuid
     image_url      String?
-    users          users            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    auth_users     auth_users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
     session_events session_events[]
 
     @@schema("public")
@@ -73,14 +73,14 @@ model flow_state {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model identities {
     id              String
-    user_id         String    @db.Uuid
+    user_id         String     @db.Uuid
     identity_data   Json
     provider        String
-    last_sign_in_at DateTime? @db.Timestamptz(6)
-    created_at      DateTime? @db.Timestamptz(6)
-    updated_at      DateTime? @db.Timestamptz(6)
-    email           String?   @default(dbgenerated("lower((identity_data ->> 'email'::text))"))
-    users           users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    last_sign_in_at DateTime?  @db.Timestamptz(6)
+    created_at      DateTime?  @db.Timestamptz(6)
+    updated_at      DateTime?  @db.Timestamptz(6)
+    email           String?    @default(dbgenerated("lower((identity_data ->> 'email'::text))"))
+    users           auth_users @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
     @@id([provider, id])
     @@index([email])
@@ -136,7 +136,7 @@ model mfa_factors {
     updated_at     DateTime         @db.Timestamptz(6)
     secret         String?
     mfa_challenges mfa_challenges[]
-    users          users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    users          auth_users       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
     @@index([user_id, created_at], map: "factor_id_created_at_idx")
     @@index([user_id])
@@ -220,7 +220,7 @@ model sessions {
     not_after      DateTime?        @db.Timestamptz(6)
     mfa_amr_claims mfa_amr_claims[]
     refresh_tokens refresh_tokens[]
-    users          users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    users          auth_users       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
     @@index([not_after(sort: Desc)])
     @@index([user_id])
@@ -261,7 +261,7 @@ model sso_providers {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
-model users {
+model auth_users {
     instance_id                 String?       @db.Uuid
     id                          String        @id @db.Uuid
     aud                         String?       @db.VarChar(255)
@@ -302,6 +302,7 @@ model users {
     projects                    projects[]
 
     @@index([instance_id])
+    @@map("users")
     @@schema("auth")
 }
 
