@@ -53,10 +53,10 @@ export const CreateProjectButtonWithModal = () => {
           }}
         >
           <div className="mt-2">
-            <label className="text-sm text-gray-500">
+            <label className="text-gray-500">
               Name
               <Input
-                className="w-full"
+                className="mt-2 w-full"
                 value={name}
                 onChange={(ev) => setName(ev.target.value)}
               />
