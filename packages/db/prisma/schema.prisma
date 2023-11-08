@@ -12,8 +12,8 @@ datasource db {
 model projects {
     user_id        String           @db.Uuid
     name           String
-    id             String           @id(map: "Projects_pkey") @unique(map: "Projects_id_key") @default(uuid()) @db.Uuid
-    token          String           @unique(map: "Projects_token_key") @default(uuid()) @db.Uuid
+    id             String           @id @unique @default(uuid()) @db.Uuid
+    token          String           @unique @default(uuid()) @db.Uuid
     image_url      String?
     auth_users     auth_users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
     session_events session_events[]
