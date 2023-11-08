@@ -15,7 +15,7 @@ model projects {
     id             String           @id @unique @default(uuid()) @db.Uuid
     token          String           @unique @default(uuid()) @db.Uuid
     image_url      String?
-    auth_users     auth_users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    auth_user      auth_users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
     session_events session_events[]
 
     @@schema("public")
@@ -27,7 +27,7 @@ model session_events {
     start_time    DateTime  @default(now()) @db.Timestamptz(6)
     end_time      DateTime? @db.Timestamptz(6)
     project_token String    @db.Uuid
-    projects      projects  @relation(fields: [project_token], references: [token], onDelete: Cascade, onUpdate: NoAction)
+    project       projects  @relation(fields: [project_token], references: [token], onDelete: Cascade, onUpdate: NoAction)
 
     @@index([start_time(sort: Desc)])
     @@schema("public")
