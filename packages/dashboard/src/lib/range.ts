@@ -8,9 +8,25 @@ export type Range = {
   to: Date;
 };
 
-export function getDefaultRange(): Range {
+export const getDefaultRange = last7DaysRange;
+
+export function last24HoursRange(): Range {
+  return {
+    from: subDays(new Date(), 1),
+    to: endOfDay(new Date()),
+  };
+}
+
+export function last7DaysRange(): Range {
   return {
     from: subDays(startOfDay(new Date()), 6),
+    to: endOfDay(new Date()),
+  };
+}
+
+export function last30DaysRange(): Range {
+  return {
+    from: subDays(startOfDay(new Date()), 30),
     to: endOfDay(new Date()),
   };
 }

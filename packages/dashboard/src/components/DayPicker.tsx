@@ -10,8 +10,21 @@ import {
 import { Popover, Listbox } from "@headlessui/react";
 import { Button } from "$/components/Button";
 import { Float } from "@headlessui-float/react";
-import { getDefaultRange, type Range } from "$/lib/range";
+import {
+  getDefaultRange,
+  last7DaysRange,
+  last24HoursRange,
+  last30DaysRange,
+  type Range,
+} from "$/lib/range";
 import { startOfDay, endOfDay } from "date-fns";
+
+type OptionFn = { option: string; fn: () => Range };
+const OPTIONS_FN_MAP: OptionFn[] = [
+  { option: "Last 24 hours", fn: last24HoursRange },
+  { option: "Last 7 days", fn: last7DaysRange },
+  { option: "Last 30 days", fn: last30DaysRange },
+];
 
 export type DayPickerProps = React.ComponentProps<typeof ReactDayPicker> & {
   range: Range;
@@ -27,6 +40,7 @@ export const DayPicker = ({
   ...props
 }: DayPickerProps) => {
   const [rangeDraft, setRangeDraft] = useState<Range>(range);
+  const [rangeLabel, setRangeLabel] = useState<Range | string>(range);
 
   return (
     <div className="flex">
@@ -43,6 +57,7 @@ export const DayPicker = ({
             }}
             onHide={() => {
               setRange(rangeDraft);
+              setRangeLabel(rangeDraft);
             }}
             enter="transition ease-out duration-200"
             enterFrom="opacity-0 translate-y-1"
@@ -97,7 +112,13 @@ export const DayPicker = ({
         )}
       </Popover>
 
-      <Listbox as="div">
+      <Listbox
+        as="div"
+        onChange={({ option, fn }: OptionFn) => {
+          setRange(fn());
+          setRangeLabel(option);
+        }}
+      >
         <Float
           portal
           autoPlacement={{
@@ -115,28 +136,35 @@ export const DayPicker = ({
             className={"flex h-full items-center gap-2 rounded-l-none"}
           >
             {(() => {
+              if (typeof rangeLabel === "string") {
+                return rangeLabel;
+              }
+
               const intlDateTimeFormatter = new Intl.DateTimeFormat(undefined, {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
               });
-              return intlDateTimeFormatter.formatRange(range.from, range.to);
+              return intlDateTimeFormatter.formatRange(
+                rangeLabel.from,
+                rangeLabel.to,
+              );
             })()}
             <IoChevronDown aria-hidden />
           </Listbox.Button>
 
           <Listbox.Options className="mt-1 min-w-[15ch] space-y-1 rounded-2xl border-2 bg-white p-1 shadow-lg">
-            {/* {OPTIONS.map((option, index) => (
+            {OPTIONS_FN_MAP.map((val, index) => (
               <Listbox.Option
-                value={option}
+                value={val}
                 key={index}
                 className={
                   "ui-active:bg-gray-100 ui-selected:!bg-gray-200 cursor-pointer rounded-xl px-6 py-2 text-center"
                 }
               >
-                {option}
+                {val.option}
               </Listbox.Option>
-            ))} */}
+            ))}
           </Listbox.Options>
         </Float>
       </Listbox>
