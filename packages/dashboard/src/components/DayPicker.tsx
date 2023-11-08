@@ -40,7 +40,6 @@ export const DayPicker = ({
   ...props
 }: DayPickerProps) => {
   const [rangeDraft, setRangeDraft] = useState<Range>(range);
-  const [rangeLabel, setRangeLabel] = useState<Range | string>(range);
 
   return (
     <div className="flex">
@@ -57,7 +56,6 @@ export const DayPicker = ({
             }}
             onHide={() => {
               setRange(rangeDraft);
-              setRangeLabel(rangeDraft);
             }}
             enter="transition ease-out duration-200"
             enterFrom="opacity-0 translate-y-1"
@@ -112,13 +110,7 @@ export const DayPicker = ({
         )}
       </Popover>
 
-      <Listbox
-        as="div"
-        onChange={({ option, fn }: OptionFn) => {
-          setRange(fn());
-          setRangeLabel(option);
-        }}
-      >
+      <Listbox as="div" onChange={({ option, fn }: OptionFn) => setRange(fn())}>
         <Float
           portal
           autoPlacement={{
@@ -136,19 +128,12 @@ export const DayPicker = ({
             className={"flex h-full items-center gap-2 rounded-l-none"}
           >
             {(() => {
-              if (typeof rangeLabel === "string") {
-                return rangeLabel;
-              }
-
               const intlDateTimeFormatter = new Intl.DateTimeFormat(undefined, {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
               });
-              return intlDateTimeFormatter.formatRange(
-                rangeLabel.from,
-                rangeLabel.to,
-              );
+              return intlDateTimeFormatter.formatRange(range.from, range.to);
             })()}
             <IoChevronDown aria-hidden />
           </Listbox.Button>
