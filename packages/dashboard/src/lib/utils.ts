@@ -13,7 +13,9 @@ export function getGroupingInterval(
 ): RouterInputs["projects"]["getSessions"]["groupingInterval"] {
   if (differenceInHours(from, to) === 0) {
     return "10min";
-  } else if (differenceInDays(from, to) === 0) {
+  }
+  // Use hour group interval if span is two days or less
+  else if (Math.abs(differenceInDays(from, to)) <= 1) {
     return "hour";
   } else if (differenceInMonths(from, to) === 0) {
     return "day";
