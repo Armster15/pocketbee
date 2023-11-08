@@ -49,7 +49,9 @@ wss.on("connection", async function connection(ws, req) {
             where: {
               id: sessionEvent.id,
               app_user_id: sessionEvent.app_user_id,
-              project_token: projectToken,
+              project: {
+                token: projectToken,
+              },
             },
             data: {
               end_time: new Date(),
@@ -73,7 +75,9 @@ wss.on("connection", async function connection(ws, req) {
             await prisma.session_events.update({
               where: {
                 id: sessionEventId,
-                project_token: projectToken,
+                project: {
+                  token: projectToken,
+                },
               },
               data: {
                 end_time: new Date(),
@@ -120,8 +124,12 @@ wss.on("connection", async function connection(ws, req) {
     sessionEvent = await prisma.session_events.create({
       data: {
         app_user_id: userId,
-        project_token: projectToken,
         id: sessionEventId,
+        project: {
+          connect: {
+            token: projectToken,
+          },
+        },
       },
     });
   } catch (err) {
