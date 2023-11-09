@@ -3,7 +3,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { api } from "$/lib/api";
-import { IoStatsChart, IoSettings } from "react-icons/io5";
+import { IoStatsChart, IoSettings, IoPeople } from "react-icons/io5";
 import Skeleton from "react-loading-skeleton";
 import { ProjectIcon } from "$/components/ProjectIcon";
 
@@ -37,6 +37,11 @@ export const ProjectLayout = ({ children }: PropsWithChildren) => {
           <ActiveLink href={`/project/${projectId}`}>
             <IoStatsChart aria-hidden />
             <span className="sr-only md:not-sr-only">Analytics</span>
+          </ActiveLink>
+
+          <ActiveLink href={`/project/${projectId}/users`}>
+            <IoPeople aria-hidden />
+            <span className="sr-only md:not-sr-only">Users</span>
           </ActiveLink>
 
           <ActiveLink href={`/project/${projectId}/settings`}>
