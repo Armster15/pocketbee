@@ -45,7 +45,7 @@ export const ActiveUsersWidget = ({
           event: "*",
           schema: "public",
           table: "session_events",
-          filter: `project_token=eq.${project.token}`,
+          filter: `project_id=eq.${project.id}`,
         },
         async (payload) => {
           console.log("PROJECT UPDATED!", payload);
