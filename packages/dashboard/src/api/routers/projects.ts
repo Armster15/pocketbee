@@ -88,7 +88,7 @@ export const projectsRouter = createTRPCRouter({
           FROM (
               SELECT e.start_time AT TIME ZONE ${timeZone} AS start_time
               FROM public.session_events AS e
-              INNER JOIN public.projects AS p ON e.project_token = p.token
+              INNER JOIN public.projects AS p ON e.project_id = p.id
               WHERE p.id = uuid(${projectId}) AND p.user_id = uuid(${user.id})
               AND e.start_time >= ${from}
               AND e.start_time <= ${to}
