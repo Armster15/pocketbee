@@ -1,28 +1,57 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model projects {
-    user_id        String           @db.Uuid // Get this from `auth.users`
-    name           String
-    id             String           @id @unique @default(uuid()) @db.Uuid
-    token          String           @unique @default(uuid()) @db.Uuid
-    image_url      String?
-    session_events session_events[]
+  user_id        String           @db.Uuid // Get this from `auth.users`
+  name           String
+  id             String           @id @unique @default(uuid()) @db.Uuid
+  token          String           @unique @default(uuid()) @db.Uuid
+  image_url      String?
+  session_events session_events[]
 }
 
 model session_events {
-    app_user_id String
-    id          String    @id @default(uuid()) @db.Uuid
-    start_time  DateTime  @default(now()) @db.Timestamptz(6)
-    end_time    DateTime? @db.Timestamptz(6)
-    project_id  String    @db.Uuid
-    project     projects  @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  app_user_id String
+  id          String    @id @default(uuid()) @db.Uuid
+  start_time  DateTime  @default(now()) @db.Timestamptz(6)
+  end_time    DateTime? @db.Timestamptz(6)
+  project_id  String    @db.Uuid
+  project     projects  @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-    @@index([start_time(sort: Desc)])
+  @@index([start_time(sort: Desc)])
+}
+
+model app_users {
+  db_id      String    @id @default(uuid()) @db.Uuid // This is immutable and never changes
+  primary_id String // ID used to identify user for ingestion
+  devices    devices[]
+}
+
+model devices {
+  app_user_id   String      @db.Uuid
+  app_user      app_users   @relation(fields: [app_user_id], references: [db_id], onDelete: Cascade, onUpdate: NoAction)
+  id            String      @id @db.Uuid
+  os_name       String
+  os_version    String
+  app_version   String
+  app_build_no  String
+  device_model  String
+  device_type   device_type
+  screen_height Int
+  screen_width  Int
+}
+
+enum device_type {
+  phone
+  tablet
+  computer
+  watch
+  spatial
+  other
 }
