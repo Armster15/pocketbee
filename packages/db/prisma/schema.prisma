@@ -14,28 +14,38 @@ model projects {
   token          String           @unique @default(uuid()) @db.Uuid
   image_url      String?
   session_events session_events[]
+  app_users      app_users[]
 }
 
 model session_events {
+  id         String    @id @default(uuid()) @db.Uuid
+  start_time DateTime  @default(now()) @db.Timestamptz(6)
+  end_time   DateTime? @db.Timestamptz(6)
+
+  // Project the event belongs to
+  project_id String   @db.Uuid
+  project    projects @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  // App user the event belongs to
+  // TODO: Change this to use the `db_id` of the user instead of the `primary_id`
   app_user_id String
-  id          String    @id @default(uuid()) @db.Uuid
-  start_time  DateTime  @default(now()) @db.Timestamptz(6)
-  end_time    DateTime? @db.Timestamptz(6)
-  project_id  String    @db.Uuid
-  project     projects  @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  // app_user    app_users @relation(fields: [app_user_id], references: [primary_id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([start_time(sort: Desc)])
 }
 
 model app_users {
-  db_id      String    @id @default(uuid()) @db.Uuid // This is immutable and never changes
-  primary_id String // ID used to identify user for ingestion
-  devices    devices[]
+  db_id          String           @id @default(uuid()) @db.Uuid // This is immutable and never changes
+  primary_id     String @unique // ID used to identify user for ingestion
+  devices        devices[]
+  // session_events session_events[]
+
+  // Project user belongs to
+  project_id String   @db.Uuid
+  project    projects @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model devices {
-  app_user_id   String      @db.Uuid
-  app_user      app_users   @relation(fields: [app_user_id], references: [db_id], onDelete: Cascade, onUpdate: NoAction)
   id            String      @id @db.Uuid
   os_name       String
   os_version    String
@@ -45,6 +55,10 @@ model devices {
   device_type   device_type
   screen_height Int
   screen_width  Int
+
+  // App user the device belongs to
+  app_user_id String    @db.Uuid
+  app_user    app_users @relation(fields: [app_user_id], references: [db_id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 enum device_type {
