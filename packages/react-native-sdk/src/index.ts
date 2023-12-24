@@ -14,7 +14,9 @@ let ws: CustomWebSocket | undefined = undefined;
 let wsPingIntervalId: number | undefined = undefined;
 
 async function onAppStateChange(status: AppStateStatus) {
-  console.log(`🐝 Pocketbee App Status: ${status}`);
+  if (store.debugLogs) {
+    console.log(`🐝 Pocketbee App Status: ${status}`);
+  }
 
   if (status === "background") {
     await sendEnd();

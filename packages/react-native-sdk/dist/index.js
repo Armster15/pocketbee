@@ -76,7 +76,9 @@ var store;
 var ws = void 0;
 var wsPingIntervalId = void 0;
 async function onAppStateChange(status) {
-  console.log(`\u{1F41D} Pocketbee App Status: ${status}`);
+  if (store.debugLogs) {
+    console.log(`\u{1F41D} Pocketbee App Status: ${status}`);
+  }
   if (status === "background") {
     await sendEnd();
   } else if (status === "active") {
